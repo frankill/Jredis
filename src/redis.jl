@@ -18,7 +18,7 @@ end
 
 function execute_command(conn::RedisConnectionBase, command)
     execute_command_without_reply(conn, command)
-    reply(conn.socket)
+    #reply(conn.socket)
 end
 
 struct redisreply{T} end 
@@ -40,7 +40,12 @@ function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket)
     return res 
 end 
 
-reply(::Type{redisreply{:$}}, value::AbstractString, conn::TCPSocket)   = readline(conn)
+function reply(::Type{redisreply{:$}}, value::AbstractString, conn::TCPSocket)
+
+    readline(conn)
+    
+end 
+
 reply(::Type{redisreply{:(:)}}, value::AbstractString, conn::TCPSocket) = parse(Int, value) 
 reply(::Type{redisreply{:+}}, value::AbstractString, conn::TCPSocket)   = value
 reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(ProtocolException(value))
