@@ -193,7 +193,3 @@ mutable struct ClientException <: RedisException
     message::AbstractString
 end
 
-
- redis = RedisConnection()
- select(redis, 9)
-lindex(redis , "test" ,4)
