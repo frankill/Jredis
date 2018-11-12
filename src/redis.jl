@@ -41,9 +41,8 @@ function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket)
 end 
 
 function reply(::Type{redisreply{:$}}, value::AbstractString, conn::TCPSocket)
-
-    readline(conn)
-    
+    num = parse(Int, value)
+    num == -1 ? nothing : readline(conn)
 end 
 
 reply(::Type{redisreply{:(:)}}, value::AbstractString, conn::TCPSocket) = parse(Int, value) 
