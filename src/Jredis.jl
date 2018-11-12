@@ -3,7 +3,8 @@ __precompile__()
 module Jredis
     
     using Sockets 
-
+    
+    export RedisConnection
     # Connection commands
     export auth, echo, ping, quit, select
     # list commands
