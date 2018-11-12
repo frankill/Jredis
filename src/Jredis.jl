@@ -1,4 +1,4 @@
-using Jredis
+module Jredis
     
     using Sockets 
 
