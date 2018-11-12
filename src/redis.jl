@@ -12,7 +12,7 @@ function pack_command(command)
 end
 
 function execute_command_without_reply(conn::RedisConnectionBase, command)
-    #is_connected(conn) || throw(ConnectionException("Socket is disconnected"))
+    is_connected(conn) || throw(ConnectionException("Socket is disconnected"))
     send_command(conn, pack_command(command))
 end
 
