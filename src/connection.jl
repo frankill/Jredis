@@ -33,7 +33,7 @@ function disconnect(conn::RedisConnectionBase)
 end
 
 function is_connected(conn::RedisConnectionBase)
-    conn.socket.status == StatusActive || conn.socket.status == StatusOpen || conn.socket.status == StatusPaused
+    conn.socket.status == 8  
 end
 
 function send_command(conn::RedisConnectionBase, command::AbstractString)
