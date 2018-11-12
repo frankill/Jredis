@@ -18,7 +18,7 @@ end
 
 function execute_command(conn::RedisConnectionBase, command)
     execute_command_without_reply(conn, command)
-    #reply(conn.socket)
+    reply(conn.socket)
 end
 
 struct redisreply{T} end 
