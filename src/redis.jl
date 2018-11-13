@@ -31,7 +31,7 @@ end
 
 function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket) 
     num = parse(Int, value)
-    num == -1 && return missing 
+    num == -1 && return nothing 
     num == 0 && return []
     res = Vector(undef, num)
     for i in 1:num
