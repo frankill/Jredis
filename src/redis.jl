@@ -47,7 +47,7 @@ end
 
 reply(::Type{redisreply{:(:)}}, value::AbstractString, conn::TCPSocket) = parse(Int, value) 
 reply(::Type{redisreply{:+}}, value::AbstractString, conn::TCPSocket)   = value
-reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(ProtocolException(value))
+reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(ClientException(value))
 
 flatten_command(command...) = vcat(map(flatten, command)...)
 
