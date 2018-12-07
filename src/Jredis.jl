@@ -152,7 +152,7 @@ module Jredis
     @genfunction rename key newkey
     @genfunction renamenx key newkey
     @genfunction restore key ttl seIntegerrializedvalue
-    @genfunction scan cursor:: options...
+    @genfunction scan cursor::Int options...
     @genfunction ttl key
 
     # List commands
