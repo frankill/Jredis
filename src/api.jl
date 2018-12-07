@@ -9,6 +9,26 @@
         socket::TCPSocket
     end
 
+    mutable struct PipelineConnection <: RedisConnectionBase
+        host::AbstractString
+        port::Integer
+        password::AbstractString
+        db::Integer
+        socket::TCPSocket
+        num_commands::Integer
+    end
+
+    function PipelineConnection(parent::RedisConnection)
+        try
+            socket = connect(parent.host, parent.port)
+            pipeline_connection = PipelineConnection(parent.host,
+                parent.port, parent.password, parent.db, socket, 0)
+            on_connect(pipeline_connection)
+        catch
+            throw(ConnectionException("Failed to create pipeline"))
+        end
+    end
+
     function RedisConnection(; host="127.0.0.1", port=6379, password= "", db=0)
         try
             socket = connect(host, port)
@@ -70,12 +90,14 @@
     reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(value)
 
     # 输入redis 命令拼接函数
-    function execute_reply(conn::RedisConnectionBase, command::AbstractVector)
-
+    function execute_send(conn::RedisConnectionBase, command::AbstractVector)
         is_connected(conn) || throw(ConnectionException("Socket is disconnected"))
         send_command(conn, pack_command(command))
-        reply(conn.socket)
+    end 
 
+    function execute_reply(conn::RedisConnectionBase, command::AbstractVector)
+        execute_send(conn, command)
+        reply(conn.socket)
     end 
 
     function pack_command(command::AbstractVector)
@@ -103,18 +125,16 @@
 
     function genfunction(  kw::Vector  ) 
 
-        func = Expr(:call , 
-            Symbol(kw[1]) ,
-            Expr(:(::) , :conn , :RedisConnectionBase)
-            )
+        func = Expr(:call , Symbol(kw[1]) ,Expr(:(::) , :conn , :RedisConnection))
+        func1 = Expr(:call , Symbol(kw[1]) ,Expr(:(::) , :conn , :PipelineConnection))
 
         length(kw) > 1 && append!(func.args, kw[2:end] )
+    
         tmp = [ extra(i) for i in kw ]  
+        block = Expr(:block , Expr(:call, :execute_reply, :conn, Expr(:call, :Merge_parameters ,tmp... )) )
+        block1 = Expr(:block , Expr(:call, :execute_send, :conn, Expr(:call, :Merge_parameters ,tmp... )) )
 
-        block = Expr(:block , Expr(:call, :execute_reply, :conn, 
-                                    Expr(:call, :Merge_parameters ,tmp... )) )
-
-        Expr(:function , func, block)
+       (Expr(:function , func, block) ,Expr(:function , func1, block1))
 
     end 
 
