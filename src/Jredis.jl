@@ -119,7 +119,7 @@ module Jredis
         block = Expr(:block , Expr(:call, :execute_reply, :conn, 
                                     Expr(:call, :Merge_parameters ,tmp... )) )
 
-        esc(Expr(:function , func, block) )
+        Expr(:function , func, block)
 
     end 
 
