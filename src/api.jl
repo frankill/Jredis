@@ -19,6 +19,16 @@
         end
     end
 
+    function RedisConnection(conn::RedisConnection)
+        try
+            socket = connect(conn.host, conn.port)
+            connection = RedisConnection(conn.host, conn.port, conn.password, conn.db, socket)
+            on_connect(connection)
+        catch
+            throw("Failed to connect to Redis server")
+        end
+    end
+
     function on_connect(conn::RedisConnectionBase)
         conn.password != "" && auth(conn, conn.password)
         conn.db != 0        && select(conn, conn.db)
