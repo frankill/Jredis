@@ -13,7 +13,7 @@ module Jredis
            scan, ttl
     # String commands
     export append, bitcount, bitop, decr, decrby,
-           get, getbit, getrange, getset, incr, incrby,
+            getbit, getrange, getset, incr, incrby,
            incrbyfloat, mget, mset, msetnx, psetex, set,
            setbit, setex, setnx, setrange, strlen
     # Hash commands
@@ -47,7 +47,7 @@ module Jredis
     export bgrewriteaof, bgsave, client_list, client_pause, client_setname, cluster_slots,
            command, command_count, command_info, config_get, config_resetstat, config_rewrite,
            config_set, dbsize, debug_object, debug_segfault, flushall, flushdb, info, lastsave,
-           role, save, shutdown, slaveof, time
+           role, save, shutdown, slaveof
 
 
  
