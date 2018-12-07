@@ -119,7 +119,7 @@ module Jredis
         block = Expr(:block , Expr(:call, :execute_reply, :conn, 
                                     Expr(:call, :Merge_parameters ,tmp... )) )
 
-        Expr(:function , func, block) 
+        esc(Expr(:function , func, block) )
 
     end 
 
@@ -165,7 +165,7 @@ module Jredis
     @genfunction lpop key
     @genfunction lpush key value values...
     @genfunction lpushx key value
-    @genfunction lrange key start finish
+    @genfunction lrange key start stop
     @genfunction lrem key count value
     @genfunction lset key index value
     @genfunction ltrim key start stop
