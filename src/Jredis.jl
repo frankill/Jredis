@@ -104,12 +104,13 @@ module Jredis
     # 生成函数 宏
 
     extra(d::Expr) = d.head == :(::) ? d.args[1] : d 
-    extra(d::Symbol) = string(d) 
+    extra(d::Symbol) = d
+    extra(d::AbstractString) = d 
 
     function genfunction(  kw::Vector  ) 
 
         func = Expr(:call , 
-            kw[1] ,
+            Symbol(kw[1]) ,
             Expr(:(::) , :conn , :RedisConnectionBase)
             )
 
@@ -131,47 +132,47 @@ module Jredis
 
     # 生成函数list
 
-    @genfunction auth password::AbstractString
-    @genfunction echo  message
-    @genfunction ping 
-    @genfunction quit 
-    @genfunction select  index::Int
+    @genfunction "auth" password::AbstractString
+    @genfunction "echo"  message
+    @genfunction "ping" 
+    @genfunction "quit" 
+    @genfunction "select"  index::Int
     # Key commands
 
-    @genfunction del key...
-    @genfunction exists key
-    @genfunction expire key seconds
-    @genfunction expireat key timestamp
-    @genfunction migrate host port key destinationdb timeout
-    @genfunction move key db
-    @genfunction persist key
-    @genfunction pexpire key milliseconds
-    @genfunction pexpireat key millisecondstimestamp
-    @genfunction pttl key
-    @genfunction randomkey
-    @genfunction rename key newkey
-    @genfunction renamenx key newkey
-    @genfunction restore key ttl seIntegerrializedvalue
-    @genfunction scan cursor::Int options...
-    @genfunction ttl key
+    @genfunction "del" key...
+    @genfunction "exists" key
+    @genfunction "expire" key seconds
+    @genfunction "expireat" key timestamp
+    @genfunction "migrate" host port key destinationdb timeout
+    @genfunction "move" key db
+    @genfunction "persist" key
+    @genfunction "pexpire" key milliseconds
+    @genfunction "pexpireat" key millisecondstimestamp
+    @genfunction "pttl" key
+    @genfunction "randomkey"
+    @genfunction "rename" key newkey
+    @genfunction "renamenx" key newkey
+    @genfunction "restore" key ttl seIntegerrializedvalue
+    @genfunction "scan" cursor::Int options...
+    @genfunction "ttl" key
 
     # List commands
-    @genfunction blpop keys::AbstractString timeout::Int
-    @genfunction brpop keys::AbstractString timeou::Int
-    @genfunction brpoplpush source destination timeout::Int
-    @genfunction lindex key index
-    @genfunction linsert key place pivot value
-    @genfunction llen key
-    @genfunction lpop key
-    @genfunction lpush key value values...
-    @genfunction lpushx key value
-    @genfunction lrange key start stop
-    @genfunction lrem key count value
-    @genfunction lset key index value
-    @genfunction ltrim key start stop
-    @genfunction rpop key
-    @genfunction rpoplpush source destination
-    @genfunction rpush key value values...
-    @genfunction rpushx key value
+    @genfunction "blpop" keys::AbstractString timeout::Int
+    @genfunction "brpop" keys::AbstractString timeou::Int
+    @genfunction "brpoplpush" source destination timeout::Int
+    @genfunction "lindex" key index
+    @genfunction "linsert" key place pivot value
+    @genfunction "llen" key
+    @genfunction "lpop" key
+    @genfunction "lpush" key value values...
+    @genfunction "lpushx" key value
+    @genfunction "lrange" key start stop
+    @genfunction "lrem" key count value
+    @genfunction "lset" key index value
+    @genfunction "ltrim" key start stop
+    @genfunction "rpop" key
+    @genfunction "rpoplpush" source destination
+    @genfunction "rpush" key value values...
+    @genfunction "rpushx" key value
 
 end 
