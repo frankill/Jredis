@@ -24,7 +24,7 @@ module Jredis
         socket::TCPSocket
     end
 
-    function RedisConnection(; host="127.0.0.1", port=6379, password= nothing, db=0)
+    function RedisConnection(; host="127.0.0.1", port=6379, password= "", db=0)
             socket = connect(host, port)
             connection = RedisConnection(host, port, password, db, socket)
             on_connect(connection)
@@ -40,7 +40,7 @@ module Jredis
 #     end
 
     function on_connect(conn::RedisConnectionBase)
-        conn.password != nothing && auth(conn, conn.password)
+        conn.password != "" && auth(conn, conn.password)
         conn.db != 0             && select(conn, conn.db)
         conn
     end
