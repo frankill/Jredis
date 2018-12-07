@@ -139,10 +139,10 @@ function pipeline_fun(::Val{false} ,conn::RedisConnection, fun::Vector{Expr})
                       Expr(:call, :reply , conn,  num  ) ))
 end 
 
-macro @pipelines(Val{true}, conn::RedisConnection, fun... )
-    pipeline_fun(conn, collect(fun) ) 
+macro @pipelines(conn::RedisConnection, fun... )
+    pipeline_fun(Val{true}, conn, collect(fun) ) 
 end 
 
-macro @transaction(Val{false}, conn::RedisConnection, fun... ) 
-    pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)] ) 
+macro @transaction(conn::RedisConnection, fun... ) 
+    pipeline_fun(Val{false},conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)] ) 
 end 
