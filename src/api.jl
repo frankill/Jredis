@@ -136,7 +136,7 @@
         block = Expr(:block , Expr(:call, :execute_reply, :conn, Expr(:call, :Merge_parameters ,tmp... )) )
         block1 = Expr(:block , 
                                 Expr(:call, :execute_send, :conn, Expr(:call, :Merge_parameters ,tmp... )) ,
-                                       Expr(:(+=) , Expr(:(.), :conn, :num_commands ) , 1 )   )
+                                       Expr(:(+=) , Expr(:(.), :conn,  :(:num_commands)) ) , 1 )   )
 
        Expr(:block , Expr(:function , func, block), Expr(:function , func1, block1))
 
