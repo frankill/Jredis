@@ -26,7 +26,7 @@
     end
 
     disconnect(conn::RedisConnectionBase) = close(conn.socket)
-    is_connected(conn::RedisConnectionBase) =conn.socket.status in [8 ,3 ,6]
+    is_connected(conn::RedisConnectionBase) =conn.socket.status in [8 ,3]
     send_command(conn::RedisConnectionBase, command::AbstractString) =write(conn.socket, command)
 
 
