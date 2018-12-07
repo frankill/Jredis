@@ -156,14 +156,14 @@ module Jredis
     @genfunction randomkey
     @genfunction rename key newkey
     @genfunction renamenx key newkey
-    @genfunction restore key ttl serializedvalue
-    @genfunction scan cursor::Integer options...
+    @genfunction restore key ttl seIntegerrializedvalue
+    @genfunction scan cursor:: options...
     @genfunction ttl key
 
     # List commands
-    @genfunction blpop keys timeout
-    @genfunction brpop keys timeout
-    @genfunction brpoplpush source destination timeout
+    @genfunction blpop keys timeout=0
+    @genfunction brpop keys timeout=0
+    @genfunction brpoplpush source destination timeout=0
     @genfunction lindex key index
     @genfunction linsert key place pivot value
     @genfunction llen key
@@ -173,7 +173,7 @@ module Jredis
     @genfunction lrange key start finish
     @genfunction lrem key count value
     @genfunction lset key index value
-    @genfunction ltrim key start finish
+    @genfunction ltrim key start stop
     @genfunction rpop key
     @genfunction rpoplpush source destination
     @genfunction rpush key value values...
