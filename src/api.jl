@@ -71,7 +71,7 @@ reply(conn::RedisConnectionBase , num::Int) = num >=1 && reply(redisreply{:*}, n
 
 # 输入redis 命令拼接函数
 function execute_send(conn::RedisConnectionBase, command::AbstractVector)
-    is_connected(conn) || throw(ConnectionException("Socket is disconnected"))
+    is_connected(conn) || throw("Socket is disconnected")
     send_command(conn, pack_command(command))
 end 
 
