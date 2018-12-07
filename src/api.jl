@@ -21,7 +21,7 @@
 
     function on_connect(conn::RedisConnectionBase)
         conn.password != "" && auth(conn, conn.password)
-        conn.db != 0             && select(conn, conn.db)
+        conn.db != 0        && select(conn, conn.db)
         conn
     end
 
