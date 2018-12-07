@@ -9,25 +9,6 @@ struct RedisConnection <: SubscribableConnection
     socket::TCPSocket
 end
 
-struct PipelineConnection <: RedisConnectionBase
-    host::AbstractString
-    port::Integer
-    password::AbstractString
-    db::Integer
-    socket::TCPSocket
-end
-
-function PipelineConnection(parent::RedisConnection)
-    try
-        socket = connect(parent.host, parent.port)
-        pipeline_connection = PipelineConnection(parent.host,
-            parent.port, parent.password, parent.db, socket)
-        on_connect(pipeline_connection)
-    catch
-        throw(ConnectionException("Failed to create pipeline"))
-    end
-end
-
 function RedisConnection(; host="127.0.0.1", port=6379, password= "", db=0)
     try
         socket = connect(host, port)
