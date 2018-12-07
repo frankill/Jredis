@@ -131,47 +131,47 @@ module Jredis
 
     # 生成函数list
 
-    @redisfunction auth password
-    @redisfunction echo  message
-    @redisfunction ping 
-    @redisfunction quit 
-    @redisfunction select  index
+    @genfunction auth password
+    @genfunction echo  message
+    @genfunction ping 
+    @genfunction quit 
+    @genfunction select  index
     # Key commands
 
-    @redisfunction del  key...
-    @redisfunction exists key
-    @redisfunction expire key seconds
-    @redisfunction expireat key timestamp
-    @redisfunction migrate host port key destinationdb timeout
-    @redisfunction move key db
-    @redisfunction persist key
-    @redisfunction pexpire key milliseconds
-    @redisfunction pexpireat key millisecondstimestamp
-    @redisfunction pttl key
-    @redisfunction randomkey
-    @redisfunction rename key newkey
-    @redisfunction renamenx key newkey
-    @redisfunction restore key ttl serializedvalue
-    @redisfunction scan cursor::Integer options...
-    @redisfunction ttl key
+    @genfunction del  key...
+    @genfunction exists key
+    @genfunction expire key seconds
+    @genfunction expireat key timestamp
+    @genfunction migrate host port key destinationdb timeout
+    @genfunction move key db
+    @genfunction persist key
+    @genfunction pexpire key milliseconds
+    @genfunction pexpireat key millisecondstimestamp
+    @genfunction pttl key
+    @genfunction randomkey
+    @genfunction rename key newkey
+    @genfunction renamenx key newkey
+    @genfunction restore key ttl serializedvalue
+    @genfunction scan cursor::Integer options...
+    @genfunction ttl key
 
     # List commands
-    @redisfunction blpop keys timeout
-    @redisfunction brpop keys timeout
-    @redisfunction brpoplpush source destination timeout
-    @redisfunction lindex key index
-    @redisfunction linsert key place pivot value
-    @redisfunction llen key
-    @redisfunction lpop key
-    @redisfunction lpush key value values...
-    @redisfunction lpushx key value
-    @redisfunction lrange key start finish
-    @redisfunction lrem key count value
-    @redisfunction lset key index value
-    @redisfunction ltrim key start finish
-    @redisfunction rpop key
-    @redisfunction rpoplpush source destination
-    @redisfunction rpush key value values...
-    @redisfunction rpushx key value
+    @genfunction blpop keys timeout
+    @genfunction brpop keys timeout
+    @genfunction brpoplpush source destination timeout
+    @genfunction lindex key index
+    @genfunction linsert key place pivot value
+    @genfunction llen key
+    @genfunction lpop key
+    @genfunction lpush key value values...
+    @genfunction lpushx key value
+    @genfunction lrange key start finish
+    @genfunction lrem key count value
+    @genfunction lset key index value
+    @genfunction ltrim key start finish
+    @genfunction rpop key
+    @genfunction rpoplpush source destination
+    @genfunction rpush key value values...
+    @genfunction rpushx key value
 
 end 
