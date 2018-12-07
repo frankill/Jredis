@@ -130,7 +130,10 @@
         func = Expr(:call , Symbol(kw[1]) ,Expr(:(::) , :conn , :RedisConnection))
         func1 = Expr(:call , Symbol(kw[1]) ,Expr(:(::) , :conn , :PipelineConnection))
 
-        length(kw) > 1 && append!(func.args, kw[2:end] )
+        length(kw) > 1 && begin 
+                            append!(func.args, kw[2:end] )
+                            append!(func1.args, kw[2:end] )
+                            end 
         tmp = [ extra(i) for i in kw ]  
     
         block = Expr(:block , Expr(:call, :execute_reply, :conn, Expr(:call, :Merge_parameters ,tmp... )) )
