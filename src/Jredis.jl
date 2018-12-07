@@ -131,14 +131,14 @@ module Jredis
 
     # 生成函数list
 
-    @genfunction auth password
+    @genfunction auth password::AbstractString
     @genfunction echo  message
     @genfunction ping 
     @genfunction quit 
-    @genfunction select  index
+    @genfunction select  index::Int
     # Key commands
 
-    @genfunction del  key...
+    @genfunction del key...
     @genfunction exists key
     @genfunction expire key seconds
     @genfunction expireat key timestamp
@@ -156,9 +156,9 @@ module Jredis
     @genfunction ttl key
 
     # List commands
-    @genfunction blpop keys timeout=0
-    @genfunction brpop keys timeout=0
-    @genfunction brpoplpush source destination timeout=0
+    @genfunction blpop keys::AbstractString timeout::Int
+    @genfunction brpop keys::AbstractString timeou::Int
+    @genfunction brpoplpush source destination timeout::Int
     @genfunction lindex key index
     @genfunction linsert key place pivot value
     @genfunction llen key
