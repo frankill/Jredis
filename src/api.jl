@@ -74,6 +74,10 @@ function execute_send(conn::RedisConnectionBase, command::AbstractVector)
     is_connected(conn) || throw("Socket is disconnected")
     send_command(conn, pack_command(command))
 end 
+function execute_send(conn::RedisConnectionBase, command::AbstractString)
+    is_connected(conn) || throw("Socket is disconnected")
+    send_command(conn, command)
+end 
 
 function execute_reply(conn::RedisConnectionBase, command::AbstractVector)
     execute_send(conn, command)
@@ -127,14 +131,14 @@ end
 
 function pipeline_fun(::Val{true}, conn::RedisConnection, fun::Vector{Expr})
     num = length(fun)
-    esc(Expr(:block, Expr(:call , :send_command , conn , 
+    esc(Expr(:block, Expr(:call , :execute_send , conn , 
                         Expr(:call , :join , fun)),
                       Expr(:call, :reply , conn,  num  ) ))
 end 
 
 function pipeline_fun(::Val{false} ,conn::RedisConnection, fun::Vector{Expr})
     num = ( length(fun) -2 ) * 2 + 2 
-    esc(Expr(:block, Expr(:call , :send_command , conn , 
+    esc(Expr(:block, Expr(:call , :execute_send , conn , 
                         Expr(:call , :join , fun)),
                       Expr(:call, :reply , conn,  num  ) ))
 end 
