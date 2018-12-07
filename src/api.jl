@@ -1,7 +1,6 @@
 abstract type RedisConnectionBase end
-abstract type SubscribableConnection<:RedisConnectionBase end 
 
-struct RedisConnection <: SubscribableConnection
+struct RedisConnection <: RedisConnectionBase
     host::AbstractString
     port::Integer
     password::AbstractString
