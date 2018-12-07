@@ -71,7 +71,6 @@
     function pack_command(command::AbstractVector)
         packed_command = "*$(length(command))\r\n"
         for token in command
-            ltoken = ifelse( isa(token, Number) , length(string(token)), length(token))
             packed_command = string(packed_command, "\$$(ltoken)\r\n", token, "\r\n")
         end
         packed_command
