@@ -164,7 +164,8 @@ module Jredis
     @genfunction "linsert" key place pivot value
     @genfunction "llen" key
     @genfunction "lpop" key
-    @genfunction "lpush" key value values...
+    @genfunction "lpush" key value
+    @genfunction "lpush" key values...
     @genfunction "lpushx" key value
     @genfunction "lrange" key start stop
     @genfunction "lrem" key count value
@@ -172,7 +173,8 @@ module Jredis
     @genfunction "ltrim" key start stop
     @genfunction "rpop" key
     @genfunction "rpoplpush" source destination
-    @genfunction "rpush" key value values...
+    @genfunction "rpush" key value
+    @genfunction "rpush" key values...    
     @genfunction "rpushx" key value
 
 end 
