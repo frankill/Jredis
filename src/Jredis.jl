@@ -92,7 +92,7 @@ module Jredis
         packed_command
     end
 
-    Merge_parameters(command...) = map(Merge_parameter, command)
+    Merge_parameters(command...) = vcat(map(Merge_parameter, command)...)
 
     Merge_parameter(token) = string(token)
     Merge_parameter(token::AbstractString) = token
