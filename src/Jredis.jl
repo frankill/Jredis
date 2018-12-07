@@ -104,7 +104,7 @@ module Jredis
     # 生成函数 宏
 
     extra(d::Expr) = d.head == :(::) ? d.args[1] : d 
-    extra(d::Symbol) = d 
+    extra(d::Symbol) = string(d) 
 
     function genfunction(  kw::Vector  ) 
 
