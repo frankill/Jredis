@@ -88,6 +88,8 @@
     reply(::Type{redisreply{:(:)}}, value::AbstractString, conn::TCPSocket) = parse(Int, value) 
     reply(::Type{redisreply{:+}}, value::AbstractString, conn::TCPSocket)   = value
     reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(value)
+    read_pipeline(conn::PipelineConnection) = reply(redisreply{:*}, string(conn.num_commands), conn.socket)
+
 
     # 输入redis 命令拼接函数
     function execute_send(conn::RedisConnectionBase, command::AbstractVector)
