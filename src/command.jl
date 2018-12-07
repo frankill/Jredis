@@ -7,7 +7,7 @@
 @genfunction "quit" 
 @genfunction "select"  index::Int
 # Key commands
-@redisfunction "keys" pattern
+@genfunction "keys" pattern
 @genfunction "del" key...
 @genfunction "exists" key
 @genfunction "expire" key seconds
