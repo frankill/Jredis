@@ -125,7 +125,7 @@ extra(d::AbstractString) = d
 function genfunction(  kw::Vector  ) 
 
     func = Expr(:call , Symbol(kw[1]) ,Expr(:(::) , :conn , :RedisConnection))
-    func1 = Expr(:call , Symbol(kw[1]) ,Expr(:(::) , :conn , :PipelineConnection))
+    func1 = Expr(:call , Symbol(kw[1]))
 
     length(kw) > 1 && begin 
                         append!(func.args, kw[2:end] )
