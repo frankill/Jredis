@@ -131,17 +131,17 @@ end
 len(::Val{true}, f::Vector{Expr}) = length(x)
 len(::Val{false}, f::Vector{Expr}) = ( length(x) -2 ) * 2 + 2
 
-function pipeline_fun(x::Val{T}, conn::RedisConnection, fun::Vector{Expr}) where T <: Bool
-    num = len(x, fun)
+function pipeline_fun(x::Bool, conn::RedisConnection, fun::Vector{Expr}) 
+    num = len(Val(x), fun)
     esc(Expr(:block, Expr(:call , :execute_send , conn , 
                         Expr(:call , :join , Expr(vcat, fun...) )),
                       Expr(:call, :reply , conn,  num  ) ))
 end 
 
 macro @pipelines(conn::RedisConnection, fun... )
-    pipeline_fun(Val{true}, conn, collect(fun) ) 
+    pipeline_fun(true, conn, collect(fun) ) 
 end 
 
 macro @transaction(conn::RedisConnection, fun... ) 
-    pipeline_fun(Val{false},conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)] ) 
+    pipeline_fun(false, conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)] ) 
 end 
