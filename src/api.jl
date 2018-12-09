@@ -174,4 +174,4 @@ end
 @rep(data::AbstractString, num::Integer)
 @rep(data::AbstractArray, num::Integer)
 @rep(data::AbstractChar, num::Integer)
-@rep(data::Union{SubString{String}, String}, num::Integer)
+
