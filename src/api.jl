@@ -131,7 +131,7 @@ end
 function pipeline_fun(x::Bool, conn::RedisConnection, fun::Vector{Expr}) 
     esc(Expr(:block, Expr(:call , :execute_send , conn , 
                         Expr(:call , :join , Expr(:call, :vcat, fun...) )),
-                      Expr(:call, :reply , Expr(:(.), conn, :(:socket) ) ))
+                      Expr(:call, :reply , Expr(:(.), conn, :(:socket) ) )))
 end 
 
 macro @pipelines(conn::RedisConnection, fun... )
