@@ -129,9 +129,9 @@ macro genfunction( kw... )
 end 
 
 function pipeline_fun(conn::Symbol, fun::Vector{Expr}) 
-    Expr(:block, Expr(:call , :execute_send , conn , 
-                        Expr(:call , :join , Expr(:call, :vcat, fun...) )),
-                      Expr(:call, :reply , Expr(:(.), conn, :(:socket) ) ))
+    Expr(:block, Expr(:call , :execute_send , esc(conn) , 
+                        Expr(:call , :join , Expr(:call, :vcat, esc(fun...)) )),
+                      Expr(:call, :reply , Expr(:(.), esc(conn), :(:socket) ) ))
 end 
 
 macro pipelines(conn, fun... )
