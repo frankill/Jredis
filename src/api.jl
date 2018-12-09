@@ -128,20 +128,16 @@ macro genfunction( kw... )
      genfunction( collect(kw) ) 
 end 
 
-len(::Val{true}, f::Vector{Expr}) = length(x)
-len(::Val{false}, f::Vector{Expr}) = ( length(x) -2 ) * 2 + 2
-
 function pipeline_fun(x::Bool, conn::RedisConnection, fun::Vector{Expr}) 
-    num = len(Val(x), fun)
     esc(Expr(:block, Expr(:call , :execute_send , conn , 
-                        Expr(:call , :join , Expr(vcat, fun...) )),
-                      Expr(:call, :reply , conn,  num  ) ))
+                        Expr(:call , :join , Expr(:call, :vcat, fun...) )),
+                      Expr(:call, :reply , :(conn.socket) ) ))
 end 
 
 macro @pipelines(conn::RedisConnection, fun... )
-    pipeline_fun(true, conn, collect(fun) ) 
+    pipeline_fun( conn, collect(fun) ) 
 end 
 
 macro @transaction(conn::RedisConnection, fun... ) 
-    pipeline_fun(false, conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)] ) 
+    pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)] ) 
 end 
