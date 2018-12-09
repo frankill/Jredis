@@ -132,7 +132,7 @@ function pipeline_fun(conn::Symbol, fun::Vector{ <: Union{Symbol,Expr} } )
    num  = length(fun)
    block = Expr(:block, Expr(:call , :(Jredis.execute_send) , conn , 
                         Expr(:call , :join , Expr(:call, :vcat, fun...) )),
-                      Expr(:call, :Jredis(reply) , conn, num ))
+                      Expr(:call, :(Jredis.reply) , conn, num ))
 end 
 
 macro pipelines(conn, fun... )
