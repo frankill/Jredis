@@ -133,7 +133,7 @@ end
      reply(conn.socket, num )
 end 
 
-pipelines(conn::RedisConnectionBase, fun... ) = pipe_trans(conn, collect(fun), length(fun))
+pipelines(conn::RedisConnectionBase, fun... ) = pipe_trans(conn, collect(fun), length(collect(fun)))
 
 function transactions(conn::RedisConnectionBase, fun... ) 
      comms = [multi(), collect(fun)..., exec()]
