@@ -135,10 +135,10 @@ function pipeline_fun(conn::RedisConnectionBase, fun::Vector{ <: Union{Symbol,Ex
                       Expr(:call, :(Jredis.reply) , conn, num ))
 end 
 
-macro pipelines(conn, fun... )
+macro pipelines(conn::RedisConnectionBase, fun... )
     esc(pipeline_fun( conn, collect(fun) ))
 end 
 
-macro transaction(conn, fun... ) 
+macro transaction(conn::RedisConnectionBase, fun... ) 
    esc(pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)]))
 end 
