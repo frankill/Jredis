@@ -5,14 +5,14 @@ redis Client implemented in Julia.  Partial features of Redis
 using Jredis
 conn = RedisConnection()
 
-# 批量插入10000條數據
+# Batch insertion of 10,000 pieces of data
 Dict( "frank" => 1, "test" => "frank") |> 
     q -> lpush(conn, :frank , rep(q, 10000) )
     
 llen(conn, :frank)
 lpop(conn, :frank)
 
-# 管道獲取所有剩餘對象
+# Batch Return of Remaining Data
 pipelines(conn, rep(lpop(:frank) , llen(conn, :frank) )...)
 
 ```
