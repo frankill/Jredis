@@ -128,7 +128,7 @@ macro genfunction( kw... )
      genfunction( collect(kw) ) 
 end 
 
-function pipeline_fun(conn::Symbol, fun::Vector{ <: Union{Symbol,Expr} } ) 
+function pipeline_fun(conn::RedisConnectionBase, fun::Vector{ <: Union{Symbol,Expr} } ) 
    num  = length(fun)
    block = Expr(:block, Expr(:call , :(Jredis.execute_send) , conn , 
                         Expr(:call , :join , Expr(:call, :vcat, fun...) )),
