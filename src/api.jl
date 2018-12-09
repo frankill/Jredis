@@ -69,16 +69,16 @@ reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(
 reply(conn::RedisConnectionBase , num::Int) = num >=1 && reply(redisreply{:*}, num, conn.socket)
 
 # 输入redis 命令拼接函数
-function execute_send(conn::RedisConnectionBase, command::AbstractVector)
+@inline function execute_send(conn::RedisConnectionBase, command::AbstractVector)
     is_connected(conn) || throw("Socket is disconnected")
     send_command(conn, pack_command(command))
 end 
-function execute_send(conn::RedisConnectionBase, command::AbstractString)
+@inline function execute_send(conn::RedisConnectionBase, command::AbstractString)
     is_connected(conn) || throw("Socket is disconnected")
     send_command(conn, command)
 end 
 
-function execute_reply(conn::RedisConnectionBase, command::AbstractVector)
+@inline function execute_reply(conn::RedisConnectionBase, command::AbstractVector)
     execute_send(conn, command)
     reply(conn.socket)
 end 
@@ -128,17 +128,14 @@ macro genfunction( kw... )
      genfunction( collect(kw) ) 
 end 
 
-function pipeline_fun(conn::RedisConnectionBase, fun::Vector{ <: Union{Symbol,Expr} } ) 
-   num  = length(fun)
-   block = Expr(:block, Expr(:call , :(Jredis.execute_send) , conn , 
-                        Expr(:call , :join , Expr(:call, :vcat, fun...) )),
-                      Expr(:call, :(Jredis.reply) , conn, num ))
+@inline function pipe_trans(conn, comms, num)
+     execute_send(conn, join(comms) )  
+     reply(conn, num )
 end 
 
-macro pipelines(conn::RedisConnectionBase, fun... )
-    esc(pipeline_fun( conn, collect(fun) ))
-end 
+pipelines(conn::RedisConnectionBase, fun... ) = pipe_trans(conn, collect(fun), length(fun)
 
-macro transaction(conn::RedisConnectionBase, fun... ) 
-   esc(pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)]))
+function transaction(conn::RedisConnectionBase, fun... ) 
+     comms = [multi(), collect(fun)..., exec()]
+     pipe_trans(conn, comms, length(comms)
 end 
