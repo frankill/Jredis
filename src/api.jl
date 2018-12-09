@@ -128,12 +128,11 @@ macro genfunction( kw... )
      genfunction( collect(kw) ) 
 end 
 
-function pipeline_fun(conn::Symbol, fun::Vector{Union{Symbol,Expr}}) 
-   con = esc(conn）
-   funs = esc(fun)
+function pipeline_fun(conn::Symbol, fun::Vector{ <: Union{Symbol,Expr} } ) 
+   con = esc(conn )
    num  = length(fun)
    Expr(:block, Expr(:call , :execute_send , con , 
-                        Expr(:call , :join , Expr(:call, :vcat, funs...) )),
+                        Expr(:call , :join , Expr(:call, :vcat, esc(fun...)) )),
                       Expr(:call, :reply , con, num ))
 end 
 
