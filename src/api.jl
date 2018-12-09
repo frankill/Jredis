@@ -135,7 +135,7 @@ end
 
 pipelines(conn::RedisConnectionBase, fun... ) = pipe_trans(conn, collect(fun), length(fun)
 
-function transaction(conn::RedisConnectionBase, fun... ) 
+function transactions(conn::RedisConnectionBase, fun... ) 
      comms = [multi(), collect(fun)..., exec()]
      pipe_trans(conn, comms, length(comms)
 end 
