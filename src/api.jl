@@ -135,7 +135,7 @@ function pipeline_fun(conn::Symbol, fun::Vector{Expr})
 end 
 
 macro pipelines(conn, fun... )
-    esc(pipeline_fun( conn, collect(fun) ) )
+    pipeline_fun( conn, collect(fun) )
 end 
 
 macro transaction(conn, fun... ) 
