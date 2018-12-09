@@ -132,7 +132,7 @@ function pipeline_fun(conn::Symbol, fun::Vector{ <: Union{Symbol,Expr} } )
    num  = length(fun)
    func = Expr(:call ,:tmp)
    block = Expr(:block, Expr(:call , :execute_send , conn , 
-                        Expr(:call , :join , Expr(:call, :vcat, esc(fun...)) )),
+                        Expr(:call , :join , Expr(:call, :vcat, fun...) )),
                       Expr(:call, :reply , conn, num ))
    esc(Expr(:function, func, block) )
 end 
