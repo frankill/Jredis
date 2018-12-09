@@ -128,7 +128,7 @@ macro genfunction( kw... )
      genfunction( collect(kw) ) 
 end 
 
-function pipeline_fun(conn::RedisConnection, fun::Vector{Expr}) 
+function pipeline_fun(conn::Symbol, fun::Vector{Expr}) 
     Expr(:block, Expr(:call , :execute_send , conn , 
                         Expr(:call , :join , Expr(:call, :vcat, fun...) )),
                       Expr(:call, :reply , Expr(:(.), conn, :(:socket) ) ))
