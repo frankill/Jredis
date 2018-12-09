@@ -5,7 +5,7 @@ module Jredis
     using Sockets 
     import JSON.json
     
-    export RedisConnection, disconnect,read_pipeline, pipelines, transactions
+    export RedisConnection, disconnect,read_pipeline, pipelines, transactions, rep 
     # Key commands
     export del,  exists, expire, expireat,
            migrate, move, persist, pexpire, pexpireat,
