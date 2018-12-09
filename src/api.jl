@@ -138,9 +138,9 @@ function pipeline_fun(conn::Symbol, fun::Vector{ <: Union{Symbol,Expr} } )
 end 
 
 macro pipelines(conn, fun... )
-    pipeline_fun( conn, collect(fun) )()
+    pipeline_fun( conn, collect(fun) )
 end 
 
 macro transaction(conn, fun... ) 
-   pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)])() 
+   pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)])
 end 
