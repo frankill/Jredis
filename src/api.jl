@@ -130,17 +130,15 @@ end
 
 function pipeline_fun(conn::Symbol, fun::Vector{ <: Union{Symbol,Expr} } ) 
    num  = length(fun)
-   func = Expr(:call ,:tmp)
-   block = Expr(:block, Expr(:call , :execute_send , conn , 
+   block = Expr(:block, Expr(:call , :(Jredis.execute_send) , conn , 
                         Expr(:call , :join , Expr(:call, :vcat, fun...) )),
-                      Expr(:call, :reply , conn, num ))
-   esc(Expr(:function, func, block) )
+                      Expr(:call, :Jredis(reply) , conn, num ))
 end 
 
 macro pipelines(conn, fun... )
-    pipeline_fun( conn, collect(fun) )
+    esc(pipeline_fun( conn, collect(fun) ))
 end 
 
 macro transaction(conn, fun... ) 
-   pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)])
+   esc(pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)]))
 end 
