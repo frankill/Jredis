@@ -128,7 +128,7 @@ macro genfunction( kw... )
      genfunction( collect(kw) ) 
 end 
 
-@inline function pipe_trans(conn::RedisConnectionBase, comms::Vector{AbstractString, num::Int)
+@inline function pipe_trans(conn::RedisConnectionBase, comms::Vector{ <: AbstractString}, num::Int)
      execute_send(conn, join(comms) )  
      reply(conn.socket, num )
 end 
