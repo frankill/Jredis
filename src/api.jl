@@ -135,6 +135,14 @@ end
 
 pipelines(conn::RedisConnectionBase, fun... ) = pipe_trans(conn, collect(fun), length(collect(fun)))
 
+function rep(::AbstractString, b::Int)
+           res = Vector{AbstractString}(undef, b)
+           for i in 1:b
+               res[i] = x
+           end
+           res
+end
+
 function transactions(conn::RedisConnectionBase, fun... ) 
      comms = [multi(), collect(fun)..., exec()]
      pipe_trans(conn, comms, length(comms))
