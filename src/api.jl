@@ -135,15 +135,43 @@ end
 
 pipelines(conn::RedisConnectionBase, fun... ) = pipe_trans(conn, collect(fun), length(collect(fun)))
 
-function rep(::AbstractString, b::Int)
-           res = Vector{AbstractString}(undef, b)
-           for i in 1:b
-               res[i] = x
-           end
-           res
-end
-
 function transactions(conn::RedisConnectionBase, fun... ) 
      comms = [multi(), collect(fun)..., exec()]
      pipe_trans(conn, comms, length(comms))
 end 
+
+function rep(a::AbstractString, b::Int)
+           res = Vector{AbstractString}(undef, b)
+           for i in 1:b
+               res[i] = a
+           end
+           res
+end
+
+Mytype = Union{Symbol , Expr}
+
+function rep_func(a::Mytype , b::Mytype)
+    
+    tpe  = a.head == :(::) ? a.args[2] : :AbstractString 
+    ab ,aa = extra(b), extra(a)
+    
+    func = Expr(:call , :rep , a, b )
+    b1   = Expr(:(=), :res , Expr(:call , Expr(:curly, :Vector , tpe) , :undef, ab) )
+    b2   = Expr(:for , Expr(:(=), :i , Expr(:call, :(:), 1, ab ) ),
+                       Expr(:block, Expr(:(=) , Expr(:ref, :res, :i) , aa ) ) )
+        
+    Expr(:function , func, Expr(:block,  b1, b2, :res) ) 
+    
+end 
+
+macro rep(a, b )
+   esc(rep_func(a,b))
+end 
+      
+@rep(data::Dict, num::Integer)
+@rep(data::Number, num::Integer)
+@rep(data::Tuple, num::Integer)
+@rep(data::AbstractString, num::Integer)
+@rep(data::AbstractArray, num::Integer)
+@rep(data::AbstractChar, num::Integer)
+@rep(data::Union{SubString{String}, String}, num::Integer)
