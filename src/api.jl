@@ -132,9 +132,9 @@ function pipeline_fun(conn::Symbol, fun::Vector{Union{Symbol,Expr}})
    con = esc(conn）
    funs = esc(fun)
    num  = length(fun)
-   esc( Expr(:block, Expr(:call , :execute_send , con , 
+   Expr(:block, Expr(:call , :execute_send , con , 
                         Expr(:call , :join , Expr(:call, :vcat, funs...) )),
-                      Expr(:call, :reply , con, num )))
+                      Expr(:call, :reply , con, num ))
 end 
 
 macro pipelines(conn, fun... )
