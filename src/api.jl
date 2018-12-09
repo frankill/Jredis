@@ -129,17 +129,18 @@ macro genfunction( kw... )
 end 
 
 function pipeline_fun(conn::Symbol, fun::Vector{ <: Union{Symbol,Expr} } ) 
-   con = esc(conn )
    num  = length(fun)
-   Expr(:block, Expr(:call , :execute_send , con , 
+   func = Expr(:call ,:tmp)
+   block = Expr(:block, Expr(:call , :execute_send , conn , 
                         Expr(:call , :join , Expr(:call, :vcat, esc(fun...)) )),
-                      Expr(:call, :reply , con, num ))
+                      Expr(:call, :reply , conn, num ))
+   esc(Expr(:function, func, block) )
 end 
 
 macro pipelines(conn, fun... )
-    pipeline_fun( conn, collect(fun) )
+    pipeline_fun( conn, collect(fun) )()
 end 
 
 macro transaction(conn, fun... ) 
-   pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)] ) 
+   pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)])() 
 end 
