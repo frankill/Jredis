@@ -66,7 +66,7 @@ end
 reply(::Type{redisreply{:(:)}}, value::AbstractString, conn::TCPSocket) = parse(Int, value) 
 reply(::Type{redisreply{:+}}, value::AbstractString, conn::TCPSocket)   = value
 reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(value)
-reply(conn::RedisConnectionBase , num::Int) = num >=1 && reply(redisreply{:*}, num, conn.socket)
+reply(conn::TCPSocket , num::Int) = num >=1 && reply(redisreply{:*}, num, conn)
 
 # 输入redis 命令拼接函数
 @inline function execute_send(conn::RedisConnectionBase, command::AbstractVector)
