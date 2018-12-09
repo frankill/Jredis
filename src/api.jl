@@ -134,10 +134,10 @@ function pipeline_fun(conn::RedisConnection, fun::Vector{Expr})
                       Expr(:call, :reply , Expr(:(.), conn, :(:socket) ) ))
 end 
 
-macro pipelines(conn::RedisConnection, fun... )
+macro pipelines(conn, fun... )
     esc(pipeline_fun( conn, collect(fun) ) )
 end 
 
-macro transaction(conn::RedisConnection, fun... ) 
+macro transaction(conn, fun... ) 
    esc( pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)] ) )
 end 
