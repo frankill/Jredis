@@ -129,15 +129,15 @@ macro genfunction( kw... )
 end 
 
 function pipeline_fun(conn::RedisConnection, fun::Vector{Expr}) 
-    esc(Expr(:block, Expr(:call , :execute_send , conn , 
+    Expr(:block, Expr(:call , :execute_send , conn , 
                         Expr(:call , :join , Expr(:call, :vcat, fun...) )),
-                      Expr(:call, :reply , Expr(:(.), conn, :(:socket) ) )))
+                      Expr(:call, :reply , Expr(:(.), conn, :(:socket) ) ))
 end 
 
 macro pipelines(conn::RedisConnection, fun... )
-    pipeline_fun( conn, collect(fun) ) 
+    esc(pipeline_fun( conn, collect(fun) ) )
 end 
 
 macro transaction(conn::RedisConnection, fun... ) 
-    pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)] ) 
+   esc( pipeline_fun(conn, [Expr(:call,:multi), fun... , Expr(:call, :exec)] ) )
 end 
