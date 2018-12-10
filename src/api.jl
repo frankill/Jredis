@@ -28,7 +28,7 @@ function RedisConnection(conn::RedisConnection)
     end
 end
 
-function on_connect(conn::RedisConnectionBase)
+@inline function on_connect(conn::RedisConnectionBase)
     conn.password != "" && auth(conn, conn.password)
     conn.db != 0        && select(conn, conn.db)
     conn
@@ -85,20 +85,20 @@ function pack_command(command::AbstractVector)
     packed_command
 end
 
-Merge_parameters(command...) = vcat(map(Merge_parameter, command)...)
+@inline Merge_parameters(command...) = vcat(map(Merge_parameter, command)...)
 
-Merge_parameter(token) = string(token)
-Merge_parameter(token::AbstractString) = token
-Merge_parameter(token::Array) = map(Merge_parameter, token)
-Merge_parameter(token::Set) = json(token)
-Merge_parameter(token::Dict) = json(token)
-Merge_parameter(token::Tuple)  = json(token)
+@inline Merge_parameter(token) = string(token)
+@inline Merge_parameter(token::AbstractString) = token
+@inline Merge_parameter(token::Array) = map(Merge_parameter, token)
+@inline Merge_parameter(token::Set) = json(token)
+@inline Merge_parameter(token::Dict) = json(token)
+@inline Merge_parameter(token::Tuple)  = json(token)
 
 # 生成函数 宏
 
-extra(d::Expr) = d.head == :(::) ? d.args[1] : d 
-extra(d::Symbol) = d
-extra(d::AbstractString) = d 
+@inlineextra(d::Expr) = d.head == :(::) ? d.args[1] : d 
+@inlineextra(d::Symbol) = d
+@inlineextra(d::AbstractString) = d 
 
 function genfunction(  kw::Vector  ) 
 
