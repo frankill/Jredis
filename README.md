@@ -18,12 +18,12 @@ pipelines(conn, rep(lpop(:frank) , llen(conn, :frank) )...)
 
 # 监控key并批量返回
 const TIMES = 2
-mutable struct ftime 
+mutable struct Ftime 
     t::Int
 end
-ftime() = ftime(TIMES) 
-@inline fadd(t::ftime) = t.t += TIMES
-@inline finit(t::ftime) = t.t > TIMES && (t.t= TIMES)
+ftime() = Ftime(TIMES) 
+@inline fadd(t::Ftime) = t.t += TIMES
+@inline finit(t::Ftime) = t.t > TIMES && (t.t= TIMES)
 
 function monitoring(redis::RedisConnection, key::AbstractString ,batch::Int = 250 )
 
