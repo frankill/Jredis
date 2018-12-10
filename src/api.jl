@@ -36,7 +36,7 @@ end
 
 @inline disconnect(conn::RedisConnectionBase) = close(conn.socket)
 @inline is_connected(conn::RedisConnectionBase) =conn.socket.status in [8 ,3]
-@inlien send_command(conn::RedisConnectionBase, command::AbstractString) =write(conn.socket, command)
+@inline send_command(conn::RedisConnectionBase, command::AbstractString) =write(conn.socket, command)
 
 # redis 回复消息解析
 struct redisreply{T} end 
