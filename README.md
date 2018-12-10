@@ -19,12 +19,23 @@ pipelines(conn, rep(lpop(:frank) , 100 )...)
 
 function monitoring(redis::RedisConnection, key::Union{AbstractString,Symbol} ,fun::Function, batch::Int = 250)
 
+    freq = ftime()
+    
     while true
 
         @cheak_reline redis 
         num= llen(redis, key) |> q -> q >= batch ? batch : q 
-        pipelines(redis, rep(lpop(key), num )...) |> fun
-        
+
+        if  num >= 1     
+            pipelines(redis, rep(lpop(key), num )...) |> fun
+            finit(freq)
+        else 
+            if freq.t >= 3600 
+                sleep(3600)
+            else 
+                sleep(fadd(freq))
+            end  
+        end 
     end 
 
 end 
