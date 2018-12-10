@@ -24,7 +24,7 @@ ftime() = Ftime(TIMES)
 @inline fadd(t::Ftime) = t.t += TIMES
 @inline finit(t::Ftime) = t.t > TIMES && (t.t= TIMES)
 
-function monitoring(redis::RedisConnection, key::AbstractString ,fun::Function, batch::Int = 250)
+function monitoring(redis::RedisConnection, key::Union{AbstractString,Symbol} ,fun::Function, batch::Int = 250)
 
     freq = ftime()
     no_line = ftime()
