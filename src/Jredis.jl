@@ -5,7 +5,8 @@ module Jredis
     using Sockets 
     import JSON.json
     
-    export RedisConnection, RedisConnectionBase, disconnect,read_pipeline, pipelines, transactions, rep , is_connected ,reconnect
+    export RedisConnection, RedisConnectionBase, disconnect,read_pipeline, pipelines, transactions, rep , 
+            is_connected ,reconnect , ftime , cheak_reline
     # Key commands
     export del,  exists, expire, expireat,
            migrate, move, persist, pexpire, pexpireat,
@@ -53,4 +54,5 @@ module Jredis
  
     include("api.jl")
     include("command.jl")
+    include("personal.jl")
 end 
