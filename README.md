@@ -15,8 +15,7 @@ lpop(conn, :frank)
 # Batch Return of Remaining Data
 pipelines(conn, rep(lpop(:frank) , llen(conn, :frank) )...)
 
-
-# 监控key并批量返回, 有数据每2秒返回一次数据，没有监控到数据，查询间隔每次增加2秒
+# monitoring key return data
 const TIMES = 2
 mutable struct Ftime 
     t::Int
@@ -28,13 +27,16 @@ ftime() = Ftime(TIMES)
 function monitoring(redis::RedisConnection, key::AbstractString ,batch::Int = 250 )
 
     freq = ftime()
+    no_line = ftime()
 
     while true
 
-        if ! (Jredis.is_connected(redis)) 
+        if ! (ping(redis) == "OK") 
             println("Failed to connect to Redis server Reconnect ")
-            sleep(10)
+            sleep(fadd(no_line))
             redis = RedisConnection(redis)
+        else 
+            finit(no_line)
         end 
 
         num = llen(redis, key) |> q -> q >= batch ? batch : q 
@@ -43,12 +45,15 @@ function monitoring(redis::RedisConnection, key::AbstractString ,batch::Int = 25
             pipelines(redis, rep(lpop(key), num )...) |> q -> println( q , "\n")
             finit(freq)
         else 
-            sleep(fadd(freq)) 
+            if freq.t >= 3600 
+                sleep(3600)
+            else 
+                sleep(fadd(freq))
+            end  
         end 
     end 
 
 end 
-
-monitoring( RedisConnection() , "frank")
+monitoring( conn , "frank")
 
 ```
