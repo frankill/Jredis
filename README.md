@@ -16,39 +16,17 @@ lpop(conn, :frank)
 pipelines(conn, rep(lpop(:frank) , 100 )...)
 
 # monitoring key return data
-const TIMES = 2
-mutable struct Ftime 
-    t::Int
-end
-ftime() = Ftime(TIMES) 
-@inline fadd(t::Ftime) = t.t += TIMES
-@inline finit(t::Ftime) = t.t > TIMES && (t.t= TIMES)
 
 function monitoring(redis::RedisConnection, key::Union{AbstractString,Symbol} ,fun::Function, batch::Int = 250)
 
     freq = ftime()
-    no_line = ftime()
-
+    
     while true
 
-        if ! (is_connected(redis)) 
-            println("Failed to connect to Redis server Reconnect ")
-            sleep(fadd(no_line))
-            try 
-                redis = RedisConnection(redis) 
-            finally 
-                continue
-            end 
-        else 
-            finit(no_line)
-        end 
+        @cheak_reline redis 
         
-        try
-            num= llen(redis, key) |> q -> q >= batch ? batch : q 
-        catch 
-            continue
-        end 
-        
+        num= llen(redis, key) |> q -> q >= batch ? batch : q 
+
         if  num >= 1     
             pipelines(redis, rep(lpop(key), num )...) |> fun
             finit(freq)
