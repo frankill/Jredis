@@ -42,9 +42,13 @@ function monitoring(redis::RedisConnection, key::Union{AbstractString,Symbol} ,f
         else 
             finit(no_line)
         end 
-
-        num= llen(redis, key) |> q -> q >= batch ? batch : q 
-
+        
+        try
+            num= llen(redis, key) |> q -> q >= batch ? batch : q 
+        catch 
+            continue
+        end 
+        
         if  num >= 1     
             pipelines(redis, rep(lpop(key), num )...) |> fun
             finit(freq)
