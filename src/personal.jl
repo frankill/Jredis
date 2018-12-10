@@ -19,11 +19,13 @@ function reline(conn::RedisConnectionBase, times::Ftime)
 end 
 
 macro cheak_reline(conn )
+    
+    con = esc(conn)
     quote
         try 
-            ping(esc($conn)) 
+            ping( $con ) 
         catch
-            reline(esc($conn), ftime())
+            reline( $con , ftime())
         end  
     end
 end 
