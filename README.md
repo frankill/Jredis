@@ -15,4 +15,40 @@ lpop(conn, :frank)
 # Batch Return of Remaining Data
 pipelines(conn, rep(lpop(:frank) , llen(conn, :frank) )...)
 
+
+# 监控key并批量返回
+const TIMES = 2
+mutable struct ftime 
+    t::Int
+end
+ftime() = ftime(TIMES) 
+@inline fadd(t::ftime) = t.t += TIMES
+@inline finit(t::ftime) = t.t > TIMES && (t.t= TIMES)
+
+function monitoring(redis::RedisConnection, key::AbstractString ,batch::Int = 250 )
+
+    freq = ftime()
+
+    while true
+
+        if ! (Jredis.is_connected(redis)) 
+            println("Failed to connect to Redis server Reconnect ")
+            sleep(10)
+            redis = RedisConnection(redis)
+        end 
+
+        num = llen(redis, key) |> q -> q >= batch ? batch : q 
+
+        if  num >= 1     
+            pipelines(redis, rep(lpop(key), num )...) |> q -> println( q , "\n")
+            finit(freq)
+        else 
+            sleep(fadd(freq)) 
+        end 
+    end 
+
+end 
+
+monitoring( RedisConnection() , "frank")
+
 ```
