@@ -13,7 +13,7 @@ llen(conn, :frank)
 lpop(conn, :frank)
 
 # Batch Return of Remaining Data
-pipelines(conn, rep(lpop(:frank) , llen(conn, :frank) )...)
+pipelines(conn, rep(lpop(:frank) , 100 )...)
 
 # monitoring key return data
 const TIMES = 2
