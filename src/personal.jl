@@ -21,9 +21,9 @@ end
 macro cheak_reline(conn )
     quote
         try 
-            ping($conn) 
+            ping(esc($conn)) 
         catch
-            reline($conn, ftime())
+            reline(esc($conn), ftime())
         end  
     end
 end 
