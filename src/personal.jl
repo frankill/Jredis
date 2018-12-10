@@ -18,18 +18,13 @@ function reline(conn::RedisConnectionBase, times::Ftime)
   
 end 
 
-function cheak_reline(conn::RedisConnectionBase )
-        
-    if ! (is_connected(conn)) 
-        println("Failed to connect to Redis server Reconnect ")
-        reline(conn , ftime() )
-    else 
+macro cheak_reline(conn::RedisConnectionBase )
+    quote
         try 
-            ping(conn) 
+            ping($conn) 
         catch
-            reline(conn, ftime())
+            reline($conn, ftime())
         end  
-    end 
-    
+    end
 end 
  
