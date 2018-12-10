@@ -34,9 +34,9 @@ function on_connect(conn::RedisConnectionBase)
     conn
 end
 
-disconnect(conn::RedisConnectionBase) = close(conn.socket)
-is_connected(conn::RedisConnectionBase) =conn.socket.status in [8 ,3]
-send_command(conn::RedisConnectionBase, command::AbstractString) =write(conn.socket, command)
+@inline disconnect(conn::RedisConnectionBase) = close(conn.socket)
+@inline is_connected(conn::RedisConnectionBase) =conn.socket.status in [8 ,3]
+@inlien send_command(conn::RedisConnectionBase, command::AbstractString) =write(conn.socket, command)
 
 # redis 回复消息解析
 struct redisreply{T} end 
@@ -139,14 +139,6 @@ function transactions(conn::RedisConnectionBase, fun... )
      comms = [multi(), collect(fun)..., exec()]
      pipe_trans(conn, comms, length(comms))
 end 
-
-function rep(a::AbstractString, b::Int)
-           res = Vector{AbstractString}(undef, b)
-           for i in 1:b
-               res[i] = a
-           end
-           res
-end
 
 Mytype = Union{Symbol , Expr}
 
