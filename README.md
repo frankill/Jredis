@@ -34,17 +34,16 @@ function monitoring(redis::RedisConnection, key::AbstractString ,fun::Function, 
         if ! (is_connected(redis)) 
             println("Failed to connect to Redis server Reconnect ")
             sleep(fadd(no_line))
-            redis = RedisConnection(redis) 
-            continue
+            try 
+                redis = RedisConnection(redis) 
+            finally 
+                continue
+            end 
         else 
             finit(no_line)
         end 
 
-        try 
-            global num= llen(redis, key) |> q -> q >= batch ? batch : q 
-        catch 
-            continue
-        end 
+        num= llen(redis, key) |> q -> q >= batch ? batch : q 
 
         if  num >= 1     
             pipelines(redis, rep(lpop(key), num )...) |> fun
@@ -59,6 +58,7 @@ function monitoring(redis::RedisConnection, key::AbstractString ,fun::Function, 
     end 
 
 end 
+
 monitoring( conn , "frank" , q -> pringln(q, "\n") )
 
 ```
