@@ -19,8 +19,6 @@ pipelines(conn, rep(lpop(:frank) , 100 )...)
 
 function monitoring(redis::RedisConnection, key::Union{AbstractString,Symbol} ,fun::Function, batch::Int = 250)
 
-    freq = ftime()
-    
     while true
 
         @cheak_reline redis 
