@@ -96,9 +96,9 @@ end
 
 # 生成函数 宏
 
-@inlineextra(d::Expr) = d.head == :(::) ? d.args[1] : d 
-@inlineextra(d::Symbol) = d
-@inlineextra(d::AbstractString) = d 
+@inline extra(d::Expr) = d.head == :(::) ? d.args[1] : d 
+@inline extra(d::Symbol) = d
+@inline extra(d::AbstractString) = d 
 
 function genfunction(  kw::Vector  ) 
 
