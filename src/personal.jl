@@ -29,4 +29,28 @@ macro cheak_reline(conn )
         end  
     end
 end 
+
+macro lpop(redis, key ,fun, batch)
+
+    nums = Expr(:(=), :num , Expr(:call, :(|>), 
+                Expr(:call, :llen, redis, key) , 
+                Expr(:(->), :q, Expr(:block, 
+                    Expr(:if , Expr(:call, :(>=), :q, batch) ,
+                        batch , :q)))))
+    
+    expr = Expr(:call, :pipelines, redis, 
+            Expr(:(...), Expr(:call, :rep , Expr(:call, :lpop , key) ,:num))) 
+
+    esc( Expr(:block, 
+        Expr(:(=), :freq, Expr(:call, :ftime)),
+        Expr(:while , true, 
+            Expr(:block, :(@cheak_reline $redis), nums ,
+            Expr(:if , Expr(:call, :(>=), :num ,1), 
+                                Expr(:block, Expr(:call, :(|>), expr, fun ), Expr(:call, :finit, :freq )),
+                                Expr(:block, Expr(:if , Expr(:call, :(>=), Expr(:(.) , :freq, :(:t)), 3600),
+                                                            Expr(:call, :sleep, 3600), 
+                                                            Expr(:call, :sleep, Expr(:call, :fadd, :freq)) 
+                                                             )))))))
+end  
+ 
  
