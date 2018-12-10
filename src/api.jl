@@ -1,6 +1,6 @@
 abstract type RedisConnectionBase end
 
-struct RedisConnection <: RedisConnectionBase
+mutable struct RedisConnection <: RedisConnectionBase
     host::AbstractString
     port::Integer
     password::AbstractString
