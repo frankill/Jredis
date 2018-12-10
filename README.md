@@ -59,6 +59,6 @@ function monitoring(redis::RedisConnection, key::AbstractString ,fun::Function, 
 
 end 
 
-monitoring( conn , "frank" , q -> pringln(q, "\n") )
+monitoring( conn , "frank" , q -> println(q, "\n") )
 
 ```
