@@ -31,7 +31,7 @@ function monitoring(redis::RedisConnection, key::AbstractString ,batch::Int = 25
 
     while true
 
-        if ! (ping(redis) == "OK") 
+        if ! (ping(redis) == "PONG") 
             println("Failed to connect to Redis server Reconnect ")
             sleep(fadd(no_line))
             redis = RedisConnection(redis) 
