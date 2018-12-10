@@ -40,11 +40,11 @@ function monitoring(redis::RedisConnection, key::AbstractString ,batch::Int = 25
             finit(no_line)
         end 
 
-        num = try 
-                    llen(redis, key) |> q -> q >= batch ? batch : q 
-              catch 
-                continue
-              end 
+          try 
+            num= llen(redis, key) |> q -> q >= batch ? batch : q 
+          catch 
+            continue
+          end 
 
         if  num >= 1     
             pipelines(redis, rep(lpop(key), num )...) |> q -> println( q , "\n")
