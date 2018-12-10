@@ -24,7 +24,7 @@ ftime() = Ftime(TIMES)
 @inline fadd(t::Ftime) = t.t += TIMES
 @inline finit(t::Ftime) = t.t > TIMES && (t.t= TIMES)
 
-function monitoring(redis::RedisConnection, key::AbstractString ,batch::Int = 250 )
+function monitoring(redis::RedisConnection, key::AbstractString ,fun::Function, batch::Int = 250)
 
     freq = ftime()
     no_line = ftime()
@@ -40,14 +40,14 @@ function monitoring(redis::RedisConnection, key::AbstractString ,batch::Int = 25
             finit(no_line)
         end 
 
-          try 
-            num= llen(redis, key) |> q -> q >= batch ? batch : q 
-          catch 
+        try 
+            global num= llen(redis, key) |> q -> q >= batch ? batch : q 
+        catch 
             continue
-          end 
+        end 
 
         if  num >= 1     
-            pipelines(redis, rep(lpop(key), num )...) |> q -> println( q , "\n")
+            pipelines(redis, rep(lpop(key), num )...) |> fun
             finit(freq)
         else 
             if freq.t >= 3600 
