@@ -69,14 +69,8 @@ reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(
 reply(conn::TCPSocket , num::Int) = num >=1 && reply(redisreply{:*}, string(num), conn)
 
 # 输入redis 命令拼接函数
-@inline function execute_send(conn::RedisConnectionBase, command::AbstractVector)
-    is_connected(conn) || throw("Socket is disconnected")
-    send_command(conn, pack_command(command))
-end 
-@inline function execute_send(conn::RedisConnectionBase, command::AbstractString)
-    is_connected(conn) || throw("Socket is disconnected")
-    send_command(conn, command)
-end 
+@inline execute_send(conn::RedisConnectionBase, command::AbstractVector) = send_command(conn, pack_command(command))
+@inline execute_send(conn::RedisConnectionBase, command::AbstractString) = send_command(conn, command)
 
 @inline function execute_reply(conn::RedisConnectionBase, command::AbstractVector)
     execute_send(conn, command)
