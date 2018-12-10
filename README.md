@@ -16,7 +16,7 @@ lpop(conn, :frank)
 pipelines(conn, rep(lpop(:frank) , llen(conn, :frank) )...)
 
 
-# 监控key并批量返回
+# 监控key并批量返回, 有数据每2秒返回一次数据，没有监控到数据，查询间隔每次增加2秒
 const TIMES = 2
 mutable struct Ftime 
     t::Int
