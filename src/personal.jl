@@ -18,7 +18,7 @@ function reline(conn::RedisConnectionBase, times::Ftime)
   
 end 
 
-macro cheak_reline(conn::RedisConnectionBase )
+macro cheak_reline(conn )
     quote
         try 
             ping($conn) 
