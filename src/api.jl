@@ -55,7 +55,7 @@ function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket)
     num == 0 && return []
     res = Vector(undef, num)
     for i in 1:num
-        res[i] = reply(conn)
+        @inbounds res[i] = reply(conn)
     end 
     return res 
 end 
@@ -146,7 +146,8 @@ function rep_func(a::Mytype , b::Mytype)
     func = Expr(:call , :rep , a, b )
     b1   = Expr(:(=), :res , Expr(:call , Expr(:curly, :Vector , tpe) , :undef, ab) )
     b2   = Expr(:for , Expr(:(=), :i , Expr(:call, :(:), 1, ab ) ),
-                       Expr(:block, Expr(:(=) , Expr(:ref, :res, :i) , aa ) ) )
+                       Expr(:block, Expr(:macrocall, Symbol("@inbounds"), "", 
+                                Expr(:(=) , Expr(:ref, :res, :i) , aa ) ) ))
         
     Expr(:function , func, Expr(:block,  b1, b2, :res) ) 
     
