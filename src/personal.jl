@@ -56,3 +56,8 @@ macro genmacro(funname, lenfun, popfun)
      esc( Expr( :macro , func,  Expr(:block, Expr(:quote, body))))   
 
 end 
+
+@genmacro spop scard spop
+@genmacro lpop llen lpop
+@genmacro rpop llen rpop
+
