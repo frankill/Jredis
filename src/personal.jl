@@ -19,14 +19,14 @@ function reline(conn::RedisConnectionBase, times::Ftime)
 end 
 
 macro cheak_reline(conn )
-    
-    esc(quote
+    con = esc(conn)
+    quote
         try 
-            ping( $conn ) 
+            ping( $con ) 
         catch
-            reline( $conn , ftime())
+            reline( $con , ftime())
         end  
-     end)
+     end
 end 
 
 macro lpop(redis, key ,fun, batch)
@@ -79,3 +79,5 @@ macro genmacro(funname, lenfun, popfun)
     esc( Expr(:macro , func, body) )
 
 end 
+
+@genmacro rpop llen rpop
