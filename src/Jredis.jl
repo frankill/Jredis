@@ -6,7 +6,9 @@ module Jredis
     import JSON.json
     
     export RedisConnection, RedisConnectionBase, disconnect,read_pipeline, pipelines, transactions, rep , 
-            is_connected ,reconnect , ftime , @cheak_reline , fadd ,finit , @genmacro
+            is_connected 
+
+    export reconnect , ftime , @cheak_reline , fadd ,finit , @genmacro, reline
     # Key commands
     export del,  exists, expire, expireat,
            migrate, move, persist, pexpire, pexpireat,
