@@ -12,7 +12,7 @@ function reline(conn::RedisConnectionBase, times::Ftime)
     try 
         reconnect(conn)
     catch
-        fadd(times)
+        times.t >= 600 || fadd(times)
         reline(conn, times)
     end
   
@@ -71,8 +71,8 @@ macro genmacro(funname, lenfun, popfun)
             Expr(:block, Expr(:macrocall, Symbol("@cheak_reline"), "", Expr(:$, :redis)) , nums ,
             Expr(:if , Expr(:call, :(>=), :num ,1), 
                                 Expr(:block, Expr(:call, :(|>), expr, Expr(:$, :fun)), Expr(:call, :finit, :freq )),
-                                Expr(:block, Expr(:if , Expr(:call, :(>=), Expr(:(.) , :freq, :(:t)), 3600),
-                                                            Expr(:call, :sleep, 3600), 
+                                Expr(:block, Expr(:if , Expr(:call, :(>=), Expr(:(.) , :freq, :(:t)), 600),
+                                                            Expr(:call, :sleep, 600), 
                                                             Expr(:call, :sleep, Expr(:call, :fadd, :freq)) 
                                                              ))))))
 
