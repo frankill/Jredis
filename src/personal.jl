@@ -20,14 +20,13 @@ end
 
 macro cheak_reline(conn )
     
-    con = esc(conn)
-    quote
+    esc(quote
         try 
-            ping( $con ) 
+            ping( $conn ) 
         catch
-            reline( $con , ftime())
+            reline( $conn , ftime())
         end  
-    end
+     end)
 end 
 
 macro lpop(redis, key ,fun, batch)
