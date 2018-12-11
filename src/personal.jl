@@ -53,7 +53,7 @@ macro genmacro(funname, lenfun, popfun)
                                                             Expr(:call, :sleep, Expr(:call, :fadd, :freq)) 
                                                              ))))))
 
-     esc( Expr( :macro , func,  Expr(:block, Expr(:quote, body))))   
+     esc( Expr( :macro , func,  Expr(:call, :esc, Expr(:block, Expr(:quote, body)))))   
 
 end 
 
