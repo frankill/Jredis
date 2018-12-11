@@ -80,4 +80,3 @@ macro genmacro(funname, lenfun, popfun)
 
 end 
 
-@genmacro rpop llen rpop
