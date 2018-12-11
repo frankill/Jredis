@@ -8,7 +8,7 @@ module Jredis
     export RedisConnection, RedisConnectionBase, disconnect,read_pipeline, pipelines, transactions, rep , 
             is_connected 
 
-    export reconnect , ftime , @cheak_reline , fadd ,finit , @genmacro, reline
+    export reconnect , ftime , @cheak_reline , fadd ,finit , @genmacro, reline ,@lpop , @rpop ,@spop
     # Key commands
     export del,  exists, expire, expireat,
            migrate, move, persist, pexpire, pexpireat,
