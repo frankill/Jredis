@@ -54,29 +54,28 @@ end
  
 macro genmacro(funname, lenfun, popfun)
 
-    func = Expr(:call , funname, :redis, :key ,:fun, :batch)
+    func = Expr(:call , funname, :redis,  :key ,:fun, :batch )
 
     nums = Expr(:(=), :num , Expr(:call, :(|>), 
-                Expr(:call, lenfun, :redis, :key) , 
+                Expr(:call, lenfun, Expr(:$, :redis), Expr(:$, :key)) , 
                 Expr(:(->), :q, Expr(:block, 
-                    Expr(:if , Expr(:call, :(>=), :q, :batch) ,
-                        :batch , :q)))))
+                    Expr(:if , Expr(:call, :(>=), :q, Expr(:$, :batch)) ,
+                        Expr(:$, :batch) , :q)))))
     
-    expr = Expr(:call, :pipelines, :redis, 
-            Expr(:(...), Expr(:call, :rep , Expr(:call, popfun , :key) ,:num))) 
+    expr = Expr(:call, :pipelines, Expr(:$, :redis), 
+            Expr(:(...), Expr(:call, :rep , Expr(:call, popfun , Expr(:$, :key)) ,:num))) 
 
     body =  Expr(:block, 
         Expr(:(=), :freq, Expr(:call, :ftime)),
         Expr(:while , true, 
-            Expr(:block, :(@cheak_reline redis), nums ,
+            Expr(:block, Expr(:macrocall, Symbol("@cheak_reline"), "", Expr(:$, :redis)) , nums ,
             Expr(:if , Expr(:call, :(>=), :num ,1), 
-                                Expr(:block, Expr(:call, :(|>), expr, :fun ), Expr(:call, :finit, :freq )),
+                                Expr(:block, Expr(:call, :(|>), expr, Expr(:$, :fun)), Expr(:call, :finit, :freq )),
                                 Expr(:block, Expr(:if , Expr(:call, :(>=), Expr(:(.) , :freq, :(:t)), 3600),
                                                             Expr(:call, :sleep, 3600), 
                                                             Expr(:call, :sleep, Expr(:call, :fadd, :freq)) 
                                                              ))))))
 
-    esc( Expr(:macro , func, body) )
+     esc( Expr( :macro , func,  Expr(:block, Expr(:quote, body))))   
 
 end 
-
