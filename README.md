@@ -18,6 +18,6 @@ pipelines(conn, rep(lpop(:frank) , 100 )...)
 # monitoring key return data
 
 fun(x) = parse.(Int, x) |> println
-@lpop( conn , "frank" , fun, 250 )
+@lpop conn :frank fun 250 
 
 ```
