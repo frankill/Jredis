@@ -8,9 +8,11 @@ end
 @inline finit(t::Ftime) = t.t > TIMES && (t.t= TIMES)
 
 function reline(conn::RedisConnectionBase, times::Ftime) 
+    println("Failed to connect to Redis server ,Reconnect after $(times.t) seconds .")
     sleep(times.t)
     try 
         reconnect(conn)
+        println("Success to connect to Redis server , takes $(times.t) seconds .")
     catch
         times.t >= 600 || fadd(times)
         reline(conn, times)
