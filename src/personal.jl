@@ -46,17 +46,26 @@ macro genmacro(funname, lenfun, popfun)
             Expr(:(...), Expr(:call, :rep , Expr(:call, popfun , Expr(:$, :key)) ,:num))) 
 
     body =  Expr(:block, 
-        Expr(:(=), :freq, Expr(:call, :ftime)),
-        Expr(:while , true, 
-            Expr(:block, Expr(:macrocall, Symbol("@cheak_reline"), "", Expr(:$, :redis)) , nums ,
-            Expr(:if , Expr(:call, :(>=), :num ,1), 
-                                Expr(:block, Expr(:call, :(|>), expr, Expr(:$, :fun)), Expr(:call, :finit, :freq )),
-                                Expr(:block, Expr(:if , Expr(:call, :(>=), Expr(:(.) , :freq, :(:t)), 600),
-                                                            Expr(:call, :sleep, 600), 
-                                                            Expr(:call, :sleep, Expr(:call, :fadd, :freq)) 
-                                                             ))))))
+                Expr(:(=), :data, Expr(:call, :Vector, :undef, 0)) ,
+                Expr(:function, Expr(:call, :f), Expr(:block, 
+                                Expr(:(&&), Expr(:(>=) , :num , 1), Expr(:call, Expr(:$, :fun), :data) ))),
+                Expr(:call, :atexit , :f) ,
+                Expr(:(=), :freq, Expr(:call, :ftime)),
+                Expr(:while , true, 
+                    Expr(:block, Expr(:macrocall, Symbol("@cheak_reline"), "", Expr(:$, :redis)) , 
+                    nums ,
+                    Expr(:if , Expr(:call, :(>=), :num ,1), 
+                                        Expr(:block, 
+                                                    Expr(:(=), :data , expr ),
+                                                    Expr(:call, Expr(:$, :fun), :data), 
+                                                    Expr(:(=), :data, Expr(:call, :Vector, :undef, 0)),
+                                                    Expr(:call, :finit, :freq )),
+                                        Expr(:block, Expr(:if , Expr(:call, :(>=), Expr(:(.) , :freq, :(:t)), 600),
+                                                                    Expr(:call, :sleep, 600), 
+                                                                    Expr(:call, :sleep, Expr(:call, :fadd, :freq)) 
+                                                                     ))))))
 
-     esc( Expr( :macro , func,   Expr(:block, Expr(:call, :esc,Expr(:quote, body)))))   
+             esc( Expr( :macro , func,   Expr(:block, Expr(:call, :esc,Expr(:quote, body)))))   
 
 end 
 
