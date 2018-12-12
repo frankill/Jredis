@@ -54,8 +54,8 @@ function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket)
     num == -1 && return nothing 
     num == 0 && return []
     res = Vector(undef, num)
-    for i in 1:num
-        @inbounds res[i] = reply(conn)
+    @inbounds for i in 1:num
+        res[i] = reply(conn)
     end 
     return res 
 end 
@@ -102,7 +102,7 @@ extra(d::Expr) = d.head == :(::) ? d.args[1] : d
 extra(d::Symbol) = d
 extra(d::AbstractString) = d 
 
-function genfunction(  kw::Vector  ) 
+function genfunction(  kw::Vector{ <: Union{AbstractString, Expr, Symbol }  ) 
 
     func = Expr(:call , Symbol(kw[1]) ,Expr(:(::) , :conn , :RedisConnection))
     func1 = Expr(:call , Symbol(kw[1]))
