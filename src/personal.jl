@@ -48,7 +48,7 @@ macro genmacro(funname, lenfun, popfun)
     body =  Expr(:block, 
                 Expr(:(=), :data, Expr(:call, :Vector, :undef, 0)) ,
                 Expr(:function, Expr(:call, :f), Expr(:block, 
-                                Expr(:(&&), Expr(:(>=) , :num , 1), Expr(:call, Expr(:$, :fun), :data) ))),
+                                Expr(:(&&), Expr(:(>=) , Expr(:call, :length, :data) , 1), Expr(:call, Expr(:$, :fun), :data) ))),
                 Expr(:call, :atexit , :f) ,
                 Expr(:(=), :freq, Expr(:call, :ftime)),
                 Expr(:while , true, 
