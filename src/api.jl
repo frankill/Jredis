@@ -71,8 +71,8 @@ reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(
 reply(conn::TCPSocket , num::Int) = num >=1 && reply(redisreply{:*}, string(num), conn)
 
 # 输入redis 命令拼接函数
-@inline execute_send(conn::RedisConnectionBase, command::AbstractVector) = send_command(conn, pack_command(command))
-@inline execute_send(conn::RedisConnectionBase, command::AbstractString) = send_command(conn, command)
+execute_send(conn::RedisConnectionBase, command::AbstractVector) = send_command(conn, pack_command(command))
+execute_send(conn::RedisConnectionBase, command::AbstractString) = send_command(conn, command)
 
 @inline function execute_reply(conn::RedisConnectionBase, command::AbstractVector)
     execute_send(conn, command)
@@ -87,20 +87,20 @@ function pack_command(command::AbstractVector)
     packed_command
 end
 
-@inline Merge_parameters(command...) = vcat(map(Merge_parameter, command)...)
+Merge_parameters(command...) = vcat(map(Merge_parameter, command)...)
 
-@inline Merge_parameter(token) = string(token)
-@inline Merge_parameter(token::AbstractString) = token
-@inline Merge_parameter(token::Array) = map(Merge_parameter, token)
-@inline Merge_parameter(token::Set) = json(token)
-@inline Merge_parameter(token::Dict) = json(token)
-@inline Merge_parameter(token::Tuple)  = json(token)
+Merge_parameter(token) = string(token)
+Merge_parameter(token::AbstractString) = token
+Merge_parameter(token::Array) = map(Merge_parameter, token)
+Merge_parameter(token::Set) = json(token)
+Merge_parameter(token::Dict) = json(token)
+Merge_parameter(token::Tuple)  = json(token)
 
 # 生成函数 宏
 
-@inline extra(d::Expr) = d.head == :(::) ? d.args[1] : d 
-@inline extra(d::Symbol) = d
-@inline extra(d::AbstractString) = d 
+extra(d::Expr) = d.head == :(::) ? d.args[1] : d 
+extra(d::Symbol) = d
+extra(d::AbstractString) = d 
 
 function genfunction(  kw::Vector  ) 
 
@@ -145,9 +145,9 @@ function rep_func(a::Mytype , b::Mytype)
     
     func = Expr(:call , :rep , a, b )
     b1   = Expr(:(=), :res , Expr(:call , Expr(:curly, :Vector , tpe) , :undef, ab) )
-    b2   = Expr(:for , Expr(:(=), :i , Expr(:call, :(:), 1, ab ) ),
-                       Expr(:block, Expr(:macrocall, Symbol("@inbounds"), "", 
-                                Expr(:(=) , Expr(:ref, :res, :i) , aa ) ) ))
+    b2   = Expr(:macrocall, Symbol("@inbounds"), "",
+                    Expr(:for , Expr(:(=), :i , Expr(:call, :(:), 1, ab ) ),
+                       Expr(:block, Expr(:(=) , Expr(:ref, :res, :i) , aa ) ) ))
         
     Expr(:function , func, Expr(:block,  b1, b2, :res) ) 
     
