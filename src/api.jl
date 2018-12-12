@@ -102,7 +102,7 @@ extra(d::Expr) = d.head == :(::) ? d.args[1] : d
 extra(d::Symbol) = d
 extra(d::AbstractString) = d 
 
-function genfunction(  kw::Vector{ <: Union{AbstractString, Expr, Symbol }  ) 
+function genfunction(  kw::Vector{ <: Union{AbstractString, Expr, Symbol }} ) 
 
     func = Expr(:call , Symbol(kw[1]) ,Expr(:(::) , :conn , :RedisConnection))
     func1 = Expr(:call , Symbol(kw[1]))
