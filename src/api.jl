@@ -92,10 +92,10 @@ Merge_parameters(command...) = vcat(map(Merge_parameter, command)...)
 Merge_parameter(token::Symbol) = string(token)
 Merge_parameter(token::Number) = string(token)
 Merge_parameter(token::AbstractString) = token
-Merge_parameter(token::Array{T}) where T <: Union{Symbol,Number,AbstractString} = map(Merge_parameter, token)
-# Merge_parameter(token::Set) = json(token)
-# Merge_parameter(token::Dict) = json(token)
-# Merge_parameter(token::Tuple)  = json(token)
+Merge_parameter(token::Array)  = map(Merge_parameter, token)
+Merge_parameter(token::Set) = json(token)
+Merge_parameter(token::Dict) = json(token)
+Merge_parameter(token::Tuple)  = json(token)
 
 # 生成函数 宏
 
