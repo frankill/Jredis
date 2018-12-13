@@ -129,7 +129,7 @@ function pipe_trans(conn::RedisConnectionBase, comms::Vector{ <: AbstractString}
      reply(conn.socket, num )
 end 
 
-function pipe_trans(conn::RedisConnectionBase, comms:AbstractString, num::Int)
+function pipe_trans(conn::RedisConnectionBase, comms::AbstractString, num::Int)
      execute_send(conn, comms  )  
      reply(conn.socket, num )
 end 
