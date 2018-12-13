@@ -1,7 +1,7 @@
 
 # 生成函数list
 
-Pamtype = Union{Symbol, AbstractString}
+Pamtype = Union{Symbol, AbstractString, Number}
 
 @genfunction "auth" password::Pamtype
 @genfunction "echo"  message::Pamtype
@@ -10,7 +10,7 @@ Pamtype = Union{Symbol, AbstractString}
 @genfunction "select"  index::Int
 # Key commands
 @genfunction "keys" pattern::Pamtype
-@genfunction "del" key::Pamtype...
+@genfunction "del" key...
 @genfunction "exists" key::Pamtype
 @genfunction "expire" key::Pamtype seconds
 @genfunction "expireat" key::Pamtype timestamp
@@ -36,7 +36,7 @@ Pamtype = Union{Symbol, AbstractString}
 @genfunction "llen" key::Pamtype
 @genfunction "lpop" key::Pamtype
 @genfunction "lpush" key::Pamtype value::Pamtype
-@genfunction "lpush" key::Pamtype values::Pamtype...
+@genfunction "lpush" key::Pamtype values...
 @genfunction "lpushx" key::Pamtype value::Pamtype
 @genfunction "lrange" key::Pamtype start::Int stop::Int
 @genfunction "lrem" key::Pamtype count::Int value::Pamtype
@@ -45,7 +45,7 @@ Pamtype = Union{Symbol, AbstractString}
 @genfunction "rpop" key::Pamtype
 @genfunction "rpoplpush" source::Pamtype destination::Pamtype
 @genfunction "rpush" key::Pamtype value::Pamtype
-@genfunction "rpush" key::Pamtype values::Pamtype...    
+@genfunction "rpush" key::Pamtype values...    
 @genfunction "rpushx" key::Pamtype value::Pamtype
 
 # string 
