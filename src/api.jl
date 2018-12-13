@@ -124,16 +124,27 @@ macro genfunction( kw... )
      genfunction( collect(kw) ) 
 end 
 
-@inline function pipe_trans(conn::RedisConnectionBase, comms::Vector{ <: AbstractString}, num::Int)
+function pipe_trans(conn::RedisConnectionBase, comms::Vector{ <: AbstractString}, num::Int)
      execute_send(conn, join(comms) )  
      reply(conn.socket, num )
 end 
 
+function pipe_trans(conn::RedisConnectionBase, comms:AbstractString, num::Int)
+     execute_send(conn, comms  )  
+     reply(conn.socket, num )
+end 
+
 pipelines(conn::RedisConnectionBase, fun... ) = pipe_trans(conn, collect(fun), length(collect(fun)))
+pipelines(conn::RedisConnectionBase, fun::AbstractString, num::Int ) = pipe_trans(conn, fun,  num )
 
 function transactions(conn::RedisConnectionBase, fun... ) 
      comms = [multi(), collect(fun)..., exec()]
      pipe_trans(conn, comms, length(comms))
+end 
+
+function transactions(conn::RedisConnectionBase, fun::AbstractString, num::Int ) 
+     comms = join[multi(), fun , exec()]
+     pipe_trans(conn, comms, num )
 end 
 
 Mytype = Union{Symbol , Expr}
