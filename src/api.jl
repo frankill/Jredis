@@ -62,7 +62,7 @@ end
 
 function reply(::Type{redisreply{:$}}, value::AbstractString, conn::TCPSocket)
     num = parse(Int, value)
-    num == -1 ? nothing : read(conn, num +2) |> chomp
+    num == -1 ? nothing : read(conn, num +2) |> q -> View(q, 1:(end-2)) |> String
 end 
 
 reply(::Type{redisreply{:(:)}}, value::AbstractString, conn::TCPSocket) = parse(Int, value) 
