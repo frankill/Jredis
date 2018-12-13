@@ -44,7 +44,7 @@ end
 struct redisreply{T} end 
 
 function reply(conn::TCPSocket)
-    tmp = readline(conn) |> chomp
+    tmp = readline(conn)  
     syms, value = tmp[1] , tmp[2:end]
     reply(redisreply{Symbol(syms)}, value, conn)
 end 
@@ -62,7 +62,7 @@ end
 
 function reply(::Type{redisreply{:$}}, value::AbstractString, conn::TCPSocket)
     num = parse(Int, value)
-    num == -1 ? nothing : readline(conn) |> chomp
+    num == -1 ? nothing : read(conn, num +2) |> chomp
 end 
 
 reply(::Type{redisreply{:(:)}}, value::AbstractString, conn::TCPSocket) = parse(Int, value) 
