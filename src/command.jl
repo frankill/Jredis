@@ -1,50 +1,52 @@
 
 # 生成函数list
 
-@genfunction "auth" password::AbstractString
-@genfunction "echo"  message
+Pamtype = Union{Symbol, AbstractString}
+
+@genfunction "auth" password::Pamtype
+@genfunction "echo"  message::Pamtype
 @genfunction "ping" 
 @genfunction "quit" 
 @genfunction "select"  index::Int
 # Key commands
-@genfunction "keys" pattern
-@genfunction "del" key...
-@genfunction "exists" key
-@genfunction "expire" key seconds
-@genfunction "expireat" key timestamp
-@genfunction "migrate" host port key destinationdb timeout
-@genfunction "move" key db
-@genfunction "persist" key
-@genfunction "pexpire" key milliseconds
-@genfunction "pexpireat" key millisecondstimestamp
-@genfunction "pttl" key
+@genfunction "keys" pattern::Pamtype
+@genfunction "del" key::Pamtype...
+@genfunction "exists" key::Pamtype
+@genfunction "expire" key::Pamtype seconds
+@genfunction "expireat" key::Pamtype timestamp
+@genfunction "migrate" host::Pamtype port::Pamtype key::Pamtype destinationdb timeout
+@genfunction "move" key::Pamtype db::Int
+@genfunction "persist" key::Pamtype
+@genfunction "pexpire" key::Pamtype milliseconds::Int
+@genfunction "pexpireat" key::Pamtype millisecondstimestamp::Int
+@genfunction "pttl" key::Pamtype
 @genfunction "randomkey"
-@genfunction "rename" key newkey
-@genfunction "renamenx" key newkey
-@genfunction "restore" key ttl seIntegerrializedvalue
+@genfunction "rename" key::Pamtype newkey::Pamtype
+@genfunction "renamenx" key::Pamtype newkey::Pamtype
+@genfunction "restore" key::Pamtype ttl::Int seIntegerrializedvalue
 @genfunction "scan" cursor::Int options...
-@genfunction "ttl" key
+@genfunction "ttl" key::Pamtype
 
 # List commands
-@genfunction "blpop" keys::AbstractString timeout::Int
-@genfunction "brpop" keys::AbstractString timeou::Int
-@genfunction "brpoplpush" source destination timeout::Int
-@genfunction "lindex" key index
-@genfunction "linsert" key place pivot value
-@genfunction "llen" key
-@genfunction "lpop" key
-@genfunction "lpush" key value
-@genfunction "lpush" key values...
-@genfunction "lpushx" key value
-@genfunction "lrange" key start stop
-@genfunction "lrem" key count value
-@genfunction "lset" key index value
-@genfunction "ltrim" key start stop
-@genfunction "rpop" key
-@genfunction "rpoplpush" source destination
-@genfunction "rpush" key value
-@genfunction "rpush" key values...    
-@genfunction "rpushx" key value
+@genfunction "blpop" keys::Pamtype timeout::Int
+@genfunction "brpop" keys::Pamtype timeou::Int
+@genfunction "brpoplpush" source::Pamtype destination::Pamtype timeout::Int
+@genfunction "lindex" key::Pamtype index::Pamtype
+@genfunction "linsert" key::Pamtype place::Pamtype pivot::Pamtype value::Pamtype
+@genfunction "llen" key::Pamtype
+@genfunction "lpop" key::Pamtype
+@genfunction "lpush" key::Pamtype value::Pamtype
+@genfunction "lpush" key::Pamtype values::Pamtype...
+@genfunction "lpushx" key::Pamtype value::Pamtype
+@genfunction "lrange" key::Pamtype start::Int stop::Int
+@genfunction "lrem" key::Pamtype count::Int value::Pamtype
+@genfunction "lset" key::Pamtype index::Pamtype value::Pamtype
+@genfunction "ltrim" key::Pamtype start::Int stop::Int
+@genfunction "rpop" key::Pamtype
+@genfunction "rpoplpush" source::Pamtype destination::Pamtype
+@genfunction "rpush" key::Pamtype value::Pamtype
+@genfunction "rpush" key::Pamtype values::Pamtype...    
+@genfunction "rpushx" key::Pamtype value::Pamtype
 
 # string 
 @genfunction "append" key value
