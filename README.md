@@ -12,6 +12,11 @@ Dict( "frank" => 1, "test" => "frank") |>
 llen(conn, :frank)
 lpop(conn, :frank)
 
+# kill 
+while true 
+   lpush(conn, :frank , collect(1:100) )
+end 
+
 # Batch Return of Remaining Data
 pipelines(conn, rep(lpop(:frank) , 100 )...)
 
