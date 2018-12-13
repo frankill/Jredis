@@ -43,7 +43,9 @@ macro genmacro(funname, lenfun, popfun)
                         Expr(:$, :batch) , :q)))))
     
     expr = Expr(:call, :pipelines, Expr(:$, :redis), 
-            Expr(:(...), Expr(:call, :rep , Expr(:call, popfun , Expr(:$, :key)) ,:num))) 
+                Expr(:call, :repeat , Expr(:call, popfun , Expr(:$, :key)) ,:num), :num)
+#     expr = Expr(:call, :pipelines, Expr(:$, :redis), 
+#             Expr(:(...), Expr(:call, :rep , Expr(:call, popfun , Expr(:$, :key)) ,:num))) 
 
     body =  Expr(:block, 
                 Expr(:(=), :data, Expr(:call, :Vector, :undef, 0)) ,
