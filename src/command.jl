@@ -32,7 +32,7 @@
 @genfunction "brpop" keys timeou::Int
 @genfunction "brpoplpush" source destination timeout::Int
 @genfunction "lindex" key index
-@genfunction "linsert" key place: pivot value
+@genfunction "linsert" key place pivot value
 @genfunction "llen" key
 @genfunction "lpop" key
 @genfunction "lpush" key value
