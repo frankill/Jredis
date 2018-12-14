@@ -16,7 +16,7 @@ function redis_data(conn::TCPSocket , data::Vector)
     ! (syms in sym) && push!(data, tmp)
     push!(data, reply(redisreply{Symbol(syms)}, value, conn) )
 
-    if conn.status == 8
+    if eof(conn.buffer)
     	redis_data(conn, data)
     else 
     	data
@@ -26,7 +26,7 @@ end
 
 function redis_clear(conn::TCPSocket )
 
-	! (conn.status in [3,8]) && return nothing
+	eof(conn.buffer) && return nothing
 
 	tmp = []
 	redis_data(conn, tmp )
