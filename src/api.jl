@@ -46,7 +46,7 @@ struct redisreply{T} end
 function reply(conn::TCPSocket)
     tmp = readline(conn)  
     syms, value = tmp[1] , tmp[2:end]
-    reply(redisreply{Symbol(syms)}, value, conn)
+    reply(redisreply{Symbol(syms)}, value, conn)::Union{Int, AbstractString, Vector{Union{Number, AbstractString}}}
 end 
 
 function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket) 
@@ -67,7 +67,7 @@ end
 
 reply(::Type{redisreply{:(:)}}, value::AbstractString, conn::TCPSocket) = parse(Int, value) 
 reply(::Type{redisreply{:+}}, value::AbstractString, conn::TCPSocket)   = value
-reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(value)
+reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = value
 reply(conn::TCPSocket , num::Int) = num >=1 && reply(redisreply{:*}, string(num), conn)
 
 # 输入redis 命令拼接函数
