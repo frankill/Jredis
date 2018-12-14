@@ -87,15 +87,15 @@ function pack_command(command::AbstractVector)
     packed_command
 end
 
-@inline Merge_parameters(command::Vector) = vcat(map(Merge_parameter, command)...)
+@inline Merge_parameters(command...) = vcat(map(Merge_parameter, command)...)
 
 Merge_parameter(token::Symbol) = string(token)
 Merge_parameter(token::Number) = string(token)
 Merge_parameter(token::AbstractString) = token
-# Merge_parameter(token::Vector)  = map(Merge_parameter, token)
-# Merge_parameter(token::Set) = json(token)
-# Merge_parameter(token::Dict) = json(token)
-# Merge_parameter(token::Tuple)  = json(token)
+Merge_parameter(token::Vector)  = map(Merge_parameter, token)
+Merge_parameter(token::Set) = json(token)
+Merge_parameter(token::Dict) = json(token)
+Merge_parameter(token::Tuple)  = json(token)
 
 # 生成函数 宏
 
@@ -114,8 +114,8 @@ function genfunction(  kw::Vector )
                         end 
     tmp = [ extra(i) for i in kw ]  
 
-    block = Expr(:block , Expr(:call, :execute_reply, :conn, Expr(:call, :Merge_parameters ,tmp )) )
-    block1 = Expr(:block ,  Expr(:call, :pack_command , Expr(:call, :Merge_parameters ,tmp ) ))
+    block = Expr(:block , Expr(:call, :execute_reply, :conn, Expr(:call, :Merge_parameters ,tmp... )) )
+    block1 = Expr(:block ,  Expr(:call, :pack_command , Expr(:call, :Merge_parameters ,tmp... ) ))
 
    esc(Expr(:block , Expr(:function , func, block), Expr(:function , func1, block1)))
 
