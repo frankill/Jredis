@@ -1,3 +1,5 @@
+import Base.StatusActive, Base.StatusOpen, Base.StatusPaused
+
 abstract type RedisConnectionBase end
 
 mutable struct RedisConnection <: RedisConnectionBase
@@ -37,7 +39,7 @@ end
 end
 
 @inline disconnect(conn::RedisConnectionBase) = close(conn.socket)
-@inline is_connected(conn::RedisConnectionBase) =conn.socket.status in [8 ,3]
+@inline is_connected(conn::RedisConnectionBase) =conn.socket.status in [StatusActive ,StatusOpen,StatusPaused]
 @inline send_command(conn::RedisConnectionBase, command::AbstractString) =write(conn.socket, command)
 
 # redis 回复消息解析
