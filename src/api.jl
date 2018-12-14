@@ -89,12 +89,12 @@ end
 
 Partype = Union{Symbol,Number,AbstractString}
 
-@inline Merge_parameters(command::Vector{T}) where T <: Union{Partype,Vector{Partype}}= vcat(map(Merge_parameter, command)...)
+@inline Merge_parameters(command::Vector{Partype}) = vcat(map(Merge_parameter, command)...)
 
 Merge_parameter(token::Symbol) = string(token)
 Merge_parameter(token::Number) = string(token)
 Merge_parameter(token::AbstractString) = token
-Merge_parameter(token::Array{Partype})  = map(Merge_parameter, token)
+# Merge_parameter(token::Vector)  = map(Merge_parameter, token)
 # Merge_parameter(token::Set) = json(token)
 # Merge_parameter(token::Dict) = json(token)
 # Merge_parameter(token::Tuple)  = json(token)
