@@ -1,4 +1,5 @@
 const TIMES = 2
+const sym = ["\$", "+", "-", ":" , "*"]
 mutable struct Ftime 
     t::Int
 end
@@ -6,6 +7,33 @@ end
 @inline ftime() = Ftime(TIMES) 
 @inline fadd(t::Ftime) = t.t += TIMES
 @inline finit(t::Ftime) = t.t > TIMES && (t.t= TIMES)
+
+function redis_data(conn::TCPSocket , data::Vector)
+
+    tmp = readline(conn)  
+    syms, value = tmp[1] , tmp[2:end]
+
+    ! (syms in sym) && push!(data, tmp)
+    push!(data, reply(redisreply{Symbol(syms)}, value, conn) )
+
+    if conn.status == 8
+    	redis_data(conn, data)
+    else 
+    	data
+    end 
+
+end 
+
+function redis_clear(conn::TCPSocket )
+
+	! (conn.status in [3,8]) && return nothing
+
+	tmp = []
+	redis_data(conn, tmp )
+
+	tmp 
+
+end 
 
 function reline(conn::RedisConnectionBase, times::Ftime) 
     println("Failed to connect to Redis server ,Reconnect after $(times.t) seconds .")
