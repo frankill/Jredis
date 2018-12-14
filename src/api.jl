@@ -87,15 +87,17 @@ function pack_command(command::AbstractVector)
     packed_command
 end
 
-Merge_parameters(command::Vector) = vcat(map(Merge_parameter, command)...)::Vector{String}
+Partype = Union{Symbol,Number,AbstractString}
 
-@inline Merge_parameter(token::Symbol) = string(token)
-@inline Merge_parameter(token::Number) = string(token)
-@inline Merge_parameter(token::AbstractString) = token
-@inline Merge_parameter(token::Array)  = map(Merge_parameter, token)
-@inline Merge_parameter(token::Set) = json(token)
-@inline Merge_parameter(token::Dict) = json(token)
-@inline Merge_parameter(token::Tuple)  = json(token)
+@inline Merge_parameters(command::Vector{Partype,Array{Partype}}) = vcat(map(Merge_parameter, command)...)
+
+Merge_parameter(token::Symbol) = string(token)
+Merge_parameter(token::Number) = string(token)
+Merge_parameter(token::AbstractString) = token
+Merge_parameter(token::Array{Partype})  = map(Merge_parameter, token)
+# Merge_parameter(token::Set) = json(token)
+# Merge_parameter(token::Dict) = json(token)
+# Merge_parameter(token::Tuple)  = json(token)
 
 # 生成函数 宏
 
