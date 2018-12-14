@@ -87,7 +87,7 @@ function pack_command(command::AbstractVector)
     packed_command
 end
 
-Merge_parameters(command) = vcat(map(Merge_parameter, command)...)
+@inline Merge_parameters(command) = vcat(map(Merge_parameter, command)...)
 
 Merge_parameter(token::Symbol) = string(token)
 Merge_parameter(token::Number) = string(token)
