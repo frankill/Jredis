@@ -67,7 +67,7 @@ end
 
 reply(::Type{redisreply{:(:)}}, value::AbstractString, conn::TCPSocket) = parse(Int, value) 
 reply(::Type{redisreply{:+}}, value::AbstractString, conn::TCPSocket)   = value
-reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = value
+reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(value)
 reply(conn::TCPSocket , num::Int) = num >=1 && reply(redisreply{:*}, string(num), conn)
 
 # 输入redis 命令拼接函数
