@@ -87,7 +87,7 @@ function pack_command(command::AbstractVector)
     packed_command
 end
 
-Merge_parameters(command...) = vcat(map(Merge_parameter, command)...)
+Merge_parameters(command) = vcat(map(Merge_parameter, command)...)
 
 Merge_parameter(token::Symbol) = string(token)
 Merge_parameter(token::Number) = string(token)
@@ -114,8 +114,8 @@ function genfunction(  kw::Vector )
                         end 
     tmp = [ extra(i) for i in kw ]  
 
-    block = Expr(:block , Expr(:call, :execute_reply, :conn, Expr(:call, :Merge_parameters ,tmp... )) )
-    block1 = Expr(:block ,  Expr(:call, :pack_command , Expr(:call, :Merge_parameters ,tmp... ) ))
+    block = Expr(:block , Expr(:call, :execute_reply, :conn, Expr(:call, :Merge_parameters ,tmp )) )
+    block1 = Expr(:block ,  Expr(:call, :pack_command , Expr(:call, :Merge_parameters ,tmp ) ))
 
    esc(Expr(:block , Expr(:function , func, block), Expr(:function , func1, block1)))
 
