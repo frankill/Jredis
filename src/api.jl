@@ -43,7 +43,7 @@ end
 # redis 回复消息解析
 struct redisreply{T} end 
 
-@inline function replys(conn::TCPSocket)
+function reply(conn::TCPSocket)
     tmp = readline(conn)  
     syms, value = tmp[1] , tmp[2:end]
     reply(redisreply{Symbol(syms)}, value, conn)
@@ -55,7 +55,7 @@ function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket)
     num == 0 && return []
     res = Vector{Union{Number, AbstractString}}(undef, num)
     @inbounds for i in 1:num
-        res[i] = replys(conn)
+        res[i] = reply(conn)
     end 
     return res 
 end 
@@ -76,7 +76,7 @@ execute_send(conn::RedisConnectionBase, command::AbstractString) = send_command(
 
 @inline function execute_reply(conn::RedisConnectionBase, command::AbstractVector)
     execute_send(conn, command)
-    replys(conn.socket)
+    reply(conn.socket)
 end 
 
 function pack_command(command::AbstractVector)
