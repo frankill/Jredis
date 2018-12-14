@@ -52,7 +52,7 @@ end
 function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket) 
     num = parse(Int, value)
     num == -1 && return nothing 
-    num == 0 && return []
+    num == 0 && return zeros(0)
     res = Vector{Union{Number, AbstractString}}(undef, num)
     @inbounds for i in 1:num
         res[i] = reply(conn)
