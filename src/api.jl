@@ -48,7 +48,7 @@ struct redisreply{T} end
 function reply(conn::TCPSocket)
     tmp = readline(conn)  
     syms, value = tmp[1] , tmp[2:end]
-    reply(redisreply{Symbol(syms)}, value, conn)::Union{Int, AbstractString, Nothing, Vector }
+    reply(redisreply{Symbol(syms)}, value, conn)
 end 
 
 function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket) 
