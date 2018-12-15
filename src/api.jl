@@ -53,7 +53,7 @@ end
 
 function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket) 
     num = parse(Int, value)
-    num == -1 && return nothing 
+    num == -1 && return nothing
     num == 0 && return []
     res = Vector{Union{Number, AbstractString}}(undef, num)
     @inbounds for i in 1:num
@@ -70,7 +70,7 @@ end
 reply(::Type{redisreply{:(:)}}, value::AbstractString, conn::TCPSocket) = parse(Int, value) 
 reply(::Type{redisreply{:+}}, value::AbstractString, conn::TCPSocket)   = value
 reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(value)
-reply(conn::TCPSocket , num::Int) = num >=1 ? reply(redisreply{:*}, string(num), conn) : []
+reply(conn::TCPSocket , num::Int) = num >=1 ? reply(redisreply{:*}, string(num), conn) : nothing
 
 # 输入redis 命令拼接函数
 execute_send(conn::RedisConnectionBase, command::AbstractVector) = send_command(conn, pack_command(command))
