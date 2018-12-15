@@ -45,10 +45,12 @@ end
 # redis 回复消息解析
 struct redisreply{T} end 
 
+Parype =Union{AbstractString,Int}
+
 function reply(conn::TCPSocket)
     tmp = readline(conn)  
     syms, value = tmp[1] , tmp[2:end]
-    reply(redisreply{Symbol(syms)}, value, conn)
+    reply(redisreply{Symbol(syms)}, value, conn)::Union{Parype,nothing, Vector{Parype}}
 end 
 
 function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket) 
