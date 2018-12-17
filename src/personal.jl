@@ -8,23 +8,30 @@ end
 @inline fadd(t::Ftime) = t.t += TIMES
 @inline finit(t::Ftime) = t.t > TIMES && (t.t= TIMES)
 
-function redis_collect(conn::RedisConnection , data::Vector = [])
+# function redis_test(conn::RedisConnection)
 
-	res = @async eof(conn.socket)  
-    	println(res.state) 
-	if res.state == :done   
-		tmp = readline(conn.socket)  
-		syms, value = tmp[1] , tmp[2:end]
-		if (syms in sym) 
-			push!(data, reply(redisreply{Symbol(syms)}, value, conn.socket) )
-		else
-			push!(data, tmp)
-		end 
-		redis_collect(conn, data)
-	else 
-		data 
-	end 
-end 
+#     res = @async eof(conn.socket)  
+#     res 
+
+# end 
+
+# function redis_collect(conn::RedisConnection , data::Vector = [])
+
+# 	res = redis_test(conn) 
+	
+# 	if res.state == :done   
+# 		tmp = readline(conn.socket)  
+# 		syms, value = tmp[1] , tmp[2:end]
+# 		if (syms in sym) 
+# 			push!(data, reply(redisreply{Symbol(syms)}, value, conn.socket) )
+# 		else
+# 			push!(data, tmp)
+# 		end 
+# 		redis_collect(conn, data)
+# 	else 
+# 		data 
+# 	end 
+# end 
 
 function reline(conn::RedisConnectionBase, times::Ftime) 
     println("Failed to connect to Redis server ,Reconnect after $(times.t) seconds .")
