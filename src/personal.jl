@@ -1,5 +1,5 @@
 const TIMES = 2
-const sym = ["\$", "+", "-", ":" , "*"]
+const sym = ['\$', '+', '-', ':' , '*']
 mutable struct Ftime 
     t::Int
 end
