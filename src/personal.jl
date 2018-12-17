@@ -15,13 +15,11 @@ function redis_collect(conn::RedisConnection , data::Vector = [])
 	if res.state == :done   
 		tmp = readline(conn.socket)  
 		syms, value = tmp[1] , tmp[2:end]
-
-		if ! (syms in sym) 
-		    push!(data, tmp)
-		else 
-		    push!(data, reply( conn.socket  ))
+		if (syms in sym) 
+			push!(data, reply(redisreply{Symbol(syms)}, value, conn) )
+		else
+			push!(data, tmp)
 		end 
-
 		redis_collect(conn, data)
 	else 
 		data 
