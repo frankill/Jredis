@@ -11,7 +11,7 @@ end
 function redis_collect(conn::RedisConnection , data::Vector = [])
 
 	res = @async eof(conn.socket)  
-    	@async println(res.state) 
+    	println(res.state) 
 	if res.state == :done   
 		tmp = readline(conn.socket)  
 		syms, value = tmp[1] , tmp[2:end]
