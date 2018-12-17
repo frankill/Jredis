@@ -8,31 +8,24 @@ end
 @inline fadd(t::Ftime) = t.t += TIMES
 @inline finit(t::Ftime) = t.t > TIMES && (t.t= TIMES)
 
-function redis_data(conn::TCPSocket , data::Vector)
+function redis_collect(conn::RedisConnection , data::Vector = [])
 
-    tmp = readline(conn)  
-    syms, value = tmp[1] , tmp[2:end]
+	res = @async eof(conn.socket)  
+    	@async println(res.state) 
+	if res.state == :done   
+		tmp = readline(conn.socket)  
+		syms, value = tmp[1] , tmp[2:end]
 
-    ! (syms in sym) && push!(data, tmp)
-    push!(data, reply(redisreply{Symbol(syms)}, value, conn) )
+		if ! (syms in sym) 
+		    push!(data, tmp)
+		else 
+		    push!(data, Jredis.reply(redisreply{Symbol(syms)}, value, conn.socket) ) 
+		end 
 
-    if eof(conn.buffer)
-    	redis_data(conn, data)
-    else 
-    	data
-    end 
-
-end 
-
-function redis_clear(conn::TCPSocket )
-
-	eof(conn.buffer) && return nothing
-
-	tmp = []
-	redis_data(conn, tmp )
-
-	tmp 
-
+		redis_collect(conn, data)
+	else 
+		data 
+	end 
 end 
 
 function reline(conn::RedisConnectionBase, times::Ftime) 
