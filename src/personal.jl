@@ -19,7 +19,7 @@ function redis_collect(conn::RedisConnection , data::Vector = [])
 		if ! (syms in sym) 
 		    push!(data, tmp)
 		else 
-		    push!(data, Jredis.reply(redisreply{Symbol(syms)}, value, conn.socket) ) 
+		    push!(data, reply(redisreply{Symbol(syms)}, value, conn.socket) ) 
 		end 
 
 		redis_collect(conn, data)
