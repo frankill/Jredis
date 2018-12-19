@@ -5,7 +5,7 @@ module Jredis
     using Sockets 
     import JSON.json
     
-    export RedisConnection, RedisConnectionBase, disconnect,read_pipeline, pipelines, transactions, rep , 
+    export RedisConnection, RedisConnectionBase, disconnect,read_pipeline, pipelines, transactions , 
             is_connected 
 
     export reconnect , ftime , @cheak_reline , fadd ,finit , @genmacro, reline ,@lpop , @rpop ,@spop,redis_collect
