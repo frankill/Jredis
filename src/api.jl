@@ -150,7 +150,4 @@ function transactions(conn::RedisConnectionBase, fun::AbstractString, num::Int )
      pipe_trans(conn, comms, num )
 end 
 
-Mytype = Union{Symbol , Expr}
-
-
 
