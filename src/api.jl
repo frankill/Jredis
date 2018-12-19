@@ -152,29 +152,5 @@ end
 
 Mytype = Union{Symbol , Expr}
 
-function rep_func(a::Mytype , b::Mytype)
-    
-    tpe  = a.head == :(::) ? a.args[2] : :AbstractString 
-    ab ,aa = extra(b), extra(a)
-    
-    func = Expr(:call , :rep , a, b )
-    b1   = Expr(:(=), :res , Expr(:call , Expr(:curly, :Vector , tpe) , :undef, ab) )
-    b2   = Expr(:macrocall, Symbol("@inbounds"), "",
-                    Expr(:for , Expr(:(=), :i , Expr(:call, :(:), 1, ab ) ),
-                       Expr(:block, Expr(:(=) , Expr(:ref, :res, :i) , aa ) ) ))
-        
-    Expr(:function , func, Expr(:block,  b1, b2, :res) ) 
-    
-end 
 
-macro rep(a, b )
-   esc(rep_func(a,b))
-end 
-      
-@rep(data::Dict, num::Integer)
-@rep(data::Number, num::Integer)
-@rep(data::Tuple, num::Integer)
-@rep(data::AbstractString, num::Integer)
-@rep(data::AbstractArray, num::Integer)
-@rep(data::AbstractChar, num::Integer)
 
