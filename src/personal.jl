@@ -38,11 +38,13 @@ function reline(conn::RedisConnectionBase, times::Ftime, fun::Function)
     sleep(times.t)
     try
         reconnect(conn)
-        println("Success to connect to Redis server , Time consuming greater than or equal to
-$(fun(times.t+2)) sec...")
+        println("""
+				Success to connect to Redis server ,
+				Time consuming greater than or equal to $(fun(times.t+2)) seconds .
+				""")
     catch
         times.t >= 600 || fadd(times)
-        reline(conn, times)
+        reline(conn, times, fun)
     end
 
 end
