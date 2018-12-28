@@ -14,7 +14,7 @@ ftime() = Ftime(TIMES, TNUM)
 				t.t += TIMES
 			end
 		end
-@inline finit(t::Ftime) = (t.t, t.num = TIMES, TNUM)
+@inline finit(t::Ftime) =  t.t, t.num = TIMES, TNUM
 
 function redis_test(conn::RedisConnection)
 
