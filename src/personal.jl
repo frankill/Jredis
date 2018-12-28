@@ -2,7 +2,7 @@ const TIMES = 2
 const TNUM = 0
 const sym = ['\$', '+', '-', ':' , '*']
 mutable struct Ftime
-    t::Int,
+    t::Int
 	num::Int
 end
 
