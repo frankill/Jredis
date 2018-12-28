@@ -1,102 +1,102 @@
 const TIMES = 2
 const sym = ['\$', '+', '-', ':' , '*']
-mutable struct Ftime 
+mutable struct Ftime
     t::Int
 end
 
-@inline ftime() = Ftime(TIMES) 
+ftime() = Ftime(TIMES)
 @inline fadd(t::Ftime) = t.t += TIMES
 @inline finit(t::Ftime) = t.t > TIMES && (t.t= TIMES)
 
-# function redis_test(conn::RedisConnection)
+function redis_test(conn::RedisConnection)
 
-#     res = @async eof(conn.socket)  
-#     res 
+    res = @async eof(conn.socket)
+    res
 
-# end 
+end
 
-# function redis_collect(conn::RedisConnection , data::Vector = [])
+function redis_collect(conn::RedisConnection , data::Vector = [])
 
-# 	res = redis_test(conn) 
-	
-# 	if res.state == :done   
-# 		tmp = readline(conn.socket)  
-# 		syms, value = tmp[1] , tmp[2:end]
-# 		if (syms in sym) 
-# 			push!(data, reply(redisreply{Symbol(syms)}, value, conn.socket) )
-# 		else
-# 			push!(data, tmp)
-# 		end 
-# 		redis_collect(conn, data)
-# 	else 
-# 		data 
-# 	end 
-# end 
+	res = redis_test(conn)
 
-function reline(conn::RedisConnectionBase, times::Ftime) 
+	if res.state == :done
+		tmp = readline(conn.socket)
+		syms, value = tmp[1] , tmp[2:end]
+		if (syms in sym)
+			push!(data, reply(redisreply{Symbol(syms)}, value, conn.socket) )
+		else
+			push!(data, tmp)
+		end
+		redis_collect(conn, data)
+	else
+		data
+	end
+end
+
+function reline(conn::RedisConnectionBase, times::Ftime, fun::Function)
     println("Failed to connect to Redis server ,Reconnect after $(times.t) seconds .")
     sleep(times.t)
-    try 
+    try
         reconnect(conn)
         println("Success to connect to Redis server , Time consuming greater than or equal to
-$(times.t) sec. .")
+$(fun(times.t+2)) sec...")
     catch
         times.t >= 600 || fadd(times)
         reline(conn, times)
     end
-  
-end 
+
+end
 
 macro cheak_reline(conn )
+	f(x::Int)::Int = (x/4)*x + (x/2 )
     con = esc(conn)
     quote
-        try 
-            ping( $con ) 
+        try
+            ping( $con )
         catch
-            reline( $con , ftime())
-        end  
+            reline( $con , ftime(), $f)
+        end
      end
-end 
- 
+end
+
 macro genmacro(funname, lenfun, popfun)
 
     func = Expr(:call , funname, :redis,  :key ,:fun, :batch )
 
-    nums = Expr(:(=), :num , Expr(:call, :(|>), 
-                Expr(:call, lenfun, Expr(:$, :redis), Expr(:$, :key)) , 
-                Expr(:(->), :q, Expr(:block, 
+    nums = Expr(:(=), :num , Expr(:call, :(|>),
+                Expr(:call, lenfun, Expr(:$, :redis), Expr(:$, :key)) ,
+                Expr(:(->), :q, Expr(:block,
                     Expr(:if , Expr(:call, :(>=), :q, Expr(:$, :batch)) ,
                         Expr(:$, :batch) , :q)))))
-    
-    expr = Expr(:call, :pipelines, Expr(:$, :redis), 
-                Expr(:call, :repeat , Expr(:call, popfun , Expr(:$, :key)) ,:num), :num) 
 
-    body =  Expr(:block, 
+    expr = Expr(:call, :pipelines, Expr(:$, :redis),
+                Expr(:call, :repeat , Expr(:call, popfun , Expr(:$, :key)) ,:num), :num)
+
+    body =  Expr(:block,
                 Expr(:(=), :data, Expr(:call, :Vector, :undef, 0)) ,
-                Expr(:function, Expr(:call, :f), Expr(:block, 
-                                Expr(:(&&), Expr(:call , :(>=) , Expr(:call, :length, :data) , 1), 
+                Expr(:function, Expr(:call, :f), Expr(:block,
+                                Expr(:(&&), Expr(:call , :(>=) , Expr(:call, :length, :data) , 1),
                                                                         Expr(:call, Expr(:$, :fun), :data) ))),
                 Expr(:call, :atexit , :f) ,
                 Expr(:(=), :freq, Expr(:call, :ftime)),
-                Expr(:while , true, 
-                    Expr(:block, Expr(:macrocall, Symbol("@cheak_reline"), "", Expr(:$, :redis)) , 
+                Expr(:while , true,
+                    Expr(:block, Expr(:macrocall, Symbol("@cheak_reline"), "", Expr(:$, :redis)) ,
                     nums ,
-                    Expr(:if , Expr(:call, :(>=), :num ,1), 
-                                        Expr(:block, 
+                    Expr(:if , Expr(:call, :(>=), :num ,1),
+                                        Expr(:block,
                                                     Expr(:(=), :data , expr ),
-                                                    Expr(:call, Expr(:$, :fun), :data), 
+                                                    Expr(:call, Expr(:$, :fun), :data),
                                                     Expr(:(=), :data, Expr(:call, :Vector, :undef, 0)),
                                                     Expr(:call, :finit, :freq )),
                                         Expr(:block, Expr(:if , Expr(:call, :(>=), Expr(:(.) , :freq, :(:t)), 600),
-                                                                    Expr(:call, :sleep, 600), 
-                                                                    Expr(:call, :sleep, Expr(:call, :fadd, :freq)) 
+                                                                    Expr(:call, :sleep, 600),
+                                                                    Expr(:call, :sleep, Expr(:call, :fadd, :freq))
                                                                      ))))))
 
-             esc( Expr( :macro , func,   Expr(:block, Expr(:call, :esc,Expr(:quote, body)))))   
+             esc( Expr( :macro , func,   Expr(:block, Expr(:call, :esc,Expr(:quote, body)))))
 
-end 
+end
 
 @genmacro spop scard spop
 @genmacro lpop llen lpop
 @genmacro rpop llen rpop
-
