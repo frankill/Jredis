@@ -1,12 +1,19 @@
 const TIMES = 2
+const TNUM = 0
 const sym = ['\$', '+', '-', ':' , '*']
 mutable struct Ftime
-    t::Int
+    t::Int,
+	num::INt
 end
 
-ftime() = Ftime(TIMES)
-@inline fadd(t::Ftime) = t.t += TIMES
-@inline finit(t::Ftime) = t.t > TIMES && (t.t= TIMES)
+ftime() = Ftime(TIMES, TNUM)
+@inline function fadd(t::Ftime)
+	 		if t.t >= 600
+				num += 1
+			else
+				t.t += TIMES
+			end
+@inline finit(t::Ftime) = (t.t, t.num = TIMES, TNUM)
 
 function redis_test(conn::RedisConnection)
 
@@ -18,7 +25,7 @@ end
 function redis_collect(conn::RedisConnection , data::Vector = [])
 
 	res = redis_test(conn)
-
+	print(res.state)
 	if res.state == :done
 		tmp = readline(conn.socket)
 		syms, value = tmp[1] , tmp[2:end]
@@ -39,11 +46,11 @@ function reline(conn::RedisConnectionBase, times::Ftime, fun::Function)
     try
         reconnect(conn)
         println("""
-				Success to connect to Redis server ,
-				Time consuming greater than or equal to $(fun(times.t+2)) seconds .
-				""")
+			Success to connect to Redis server ,
+			Time consuming greater than or equal to $(fun(times.t+2) + times.num*600 ) seconds .
+			""")
     catch
-        times.t >= 600 || fadd(times)
+        fadd(times)
         reline(conn, times, fun)
     end
 
