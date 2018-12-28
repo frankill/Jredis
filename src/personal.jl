@@ -3,7 +3,7 @@ const TNUM = 0
 const sym = ['\$', '+', '-', ':' , '*']
 mutable struct Ftime
     t::Int,
-	num::INt
+	num::Int
 end
 
 ftime() = Ftime(TIMES, TNUM)
