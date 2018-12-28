@@ -9,10 +9,11 @@ end
 ftime() = Ftime(TIMES, TNUM)
 @inline function fadd(t::Ftime)
 	 		if t.t >= 600
-				num += 1
+				t.num += 1
 			else
 				t.t += TIMES
 			end
+		end
 @inline finit(t::Ftime) = (t.t, t.num = TIMES, TNUM)
 
 function redis_test(conn::RedisConnection)
