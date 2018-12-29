@@ -45,7 +45,7 @@ end
 # redis 回复消息解析
 struct redisreply{T} end
 
-@inline function reply(conn::TCPSocket)
+function reply(conn::TCPSocket)
     tmp = readline(conn)
     syms, value = tmp[1] , tmp[2:end]
     reply(redisreply{Symbol(syms)}, value, conn)
