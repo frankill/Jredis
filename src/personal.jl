@@ -21,11 +21,11 @@ ftime() = Ftime(TIMES, TNUM)
 function redis_collect(conn::RedisConnection , test::AbstractString="test")
 
 	res = redis_test(conn, test)
-	collects(conn,test , String[])
+	collects(conn,test , [])
 
 end
 
-function collects(conn::RedisConnection , test::AbstractString, data::Vector{String})
+function collects(conn::RedisConnection , test::AbstractString, data::Vector)
 	tmp = readline(conn.socket)
 	syms, value = tmp[1] , tmp[2:end]
 	if (syms in sym)
