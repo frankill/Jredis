@@ -87,7 +87,7 @@ macro genmacro(funname, lenfun, popfun)
                 Expr(:function, Expr(:call, :f), Expr(:block,
                                 Expr(:(&&), Expr(:call , :(>=) , Expr(:call, :length, :data) , 1),
                                                                         Expr(:call, Expr(:$, :fun), :data) ),
-								Expr(:= , :tmp , Expr(:call, :redis_collect , Expr(:$, :redis))),
+								Expr(:(=) , :tmp , Expr(:call, :redis_collect , Expr(:$, :redis))),
 								Expr(:(&&), Expr(:call , :(>=) , Expr(:call, :length, :tmp) , 1),
                                                                         Expr(:call, Expr(:$, :fun), :tmp) ))),
                 Expr(:call, :atexit , :f) ,
