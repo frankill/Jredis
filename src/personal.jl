@@ -21,11 +21,11 @@ ftime() = Ftime(TIMES, TNUM)
 function redis_collect(conn::RedisConnection , data::Vector{String} = [], test::AbstractString="test")
 
 	res = redis_test(conn, test)
-	collects(conn, data,test )
+	collects(conn,test , data)
 
 end
 
-function collects(conn::RedisConnection , data::Vector{String} = [], test::AbstractString)
+function collects(conn::RedisConnection , test::AbstractString, data::Vector{String} = [])
 	tmp = readline(conn.socket)
 	syms, value = tmp[1] , tmp[2:end]
 	if (syms in sym)
@@ -38,7 +38,7 @@ function collects(conn::RedisConnection , data::Vector{String} = [], test::Abstr
 	else
 		push!(data, tmp)
 	end
-	collects(conn, data, test)
+	collects(conn, test, data)
 end
 
 function reline(conn::RedisConnectionBase, times::Ftime, fun::Function)
