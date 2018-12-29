@@ -18,7 +18,7 @@ ftime() = Ftime(TIMES, TNUM)
 
 @inline redis_test(conn::RedisConnection,test::AbstractString) = send_command(conn, echo(test) )
 
-function redis_collect(conn::RedisConnection  test::AbstractString="test")
+function redis_collect(conn::RedisConnection , test::AbstractString="test")
 
 	res = redis_test(conn, test)
 	collects(conn,test , String[])
