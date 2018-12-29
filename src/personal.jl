@@ -16,29 +16,29 @@ ftime() = Ftime(TIMES, TNUM)
 		end
 @inline finit(t::Ftime) =  t.t, t.num = TIMES, TNUM
 
-function redis_test(conn::RedisConnection)
+@inline redis_test(conn::RedisConnection,test::AbstractString) = send_command(conn, echo(test) )
 
-    res = @async eof(conn.socket)
-    res
+function redis_collect(conn::RedisConnection , data::Vector{String} = [], test::AbstractString="test")
+
+	res = redis_test(conn, test)
+	collects(conn, data,test )
 
 end
 
-function redis_collect(conn::RedisConnection , data::Vector = [])
-
-	res = redis_test(conn)
-	print(res.state)
-	if res.state == :done
-		tmp = readline(conn.socket)
-		syms, value = tmp[1] , tmp[2:end]
-		if (syms in sym)
-			push!(data, reply(redisreply{Symbol(syms)}, value, conn.socket) )
+function collects(conn::RedisConnection , data::Vector{String} = [], test::AbstractString)
+	tmp = readline(conn.socket)
+	syms, value = tmp[1] , tmp[2:end]
+	if (syms in sym)
+		val = reply(redisreply{Symbol(syms)}, value, conn.socket)
+		if val != test
+			push!(data, val )
 		else
-			push!(data, tmp)
+			return data
 		end
-		redis_collect(conn, data)
 	else
-		data
+		push!(data, tmp)
 	end
+	collects(conn, data, test)
 end
 
 function reline(conn::RedisConnectionBase, times::Ftime, fun::Function)
@@ -48,7 +48,7 @@ function reline(conn::RedisConnectionBase, times::Ftime, fun::Function)
         reconnect(conn)
         println("""
 			Success to connect to Redis server ,
-			Time consuming greater than or equal to $(fun(times.t+2) + times.num*600 ) seconds .
+			Time consuming greater than or equal to $(fun(times.t) + times.num*600 ) seconds .
 			""")
     catch
         fadd(times)

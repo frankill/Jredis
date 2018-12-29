@@ -43,31 +43,31 @@ end
 @inline send_command(conn::RedisConnectionBase, command::AbstractString) =write(conn.socket, command)
 
 # redis 回复消息解析
-struct redisreply{T} end 
+struct redisreply{T} end
 
 function reply(conn::TCPSocket)
-    tmp = readline(conn)  
+    tmp = readline(conn)
     syms, value = tmp[1] , tmp[2:end]
     reply(redisreply{Symbol(syms)}, value, conn)
-end 
+end
 
-function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket) 
+function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket)
     num = parse(Int, value)
     num == -1 && return nothing
     num == 0 && return Int[]
     res = Vector{Union{Int, String}}(undef, num)
     @inbounds for i in 1:num
         res[i] = reply(conn)
-    end 
-    return res 
-end 
+    end
+    return res
+end
 
 function reply(::Type{redisreply{:$}}, value::AbstractString, conn::TCPSocket)
     num = parse(Int, value)
     num == -1 ? nothing : read(conn, num +2) |> q -> view(q, 1:num) |> String
-end 
+end
 
-reply(::Type{redisreply{:(:)}}, value::AbstractString, conn::TCPSocket) = parse(Int, value) 
+reply(::Type{redisreply{:(:)}}, value::AbstractString, conn::TCPSocket) = parse(Int, value)
 reply(::Type{redisreply{:+}}, value::AbstractString, conn::TCPSocket)   = value
 reply(::Type{redisreply{:-}}, value::AbstractString, conn::TCPSocket)   = throw(value)
 reply(conn::TCPSocket , num::Int) = num >=1 ? reply(redisreply{:*}, string(num), conn) : nothing
@@ -76,12 +76,12 @@ reply(conn::TCPSocket , num::Int) = num >=1 ? reply(redisreply{:*}, string(num),
 execute_send(conn::RedisConnectionBase, command::AbstractVector) = send_command(conn, pack_command(command))
 execute_send(conn::RedisConnectionBase, command::AbstractString) = send_command(conn, command)
 
-@inline function execute_reply(conn::RedisConnectionBase, command::AbstractVector)
+@inline function execute_reply(conn::RedisConnectionBase, command::Vector{String})
     execute_send(conn, command)
     reply(conn.socket)
-end 
+end
 
-function pack_command(command::AbstractVector)
+function pack_command(command::Vector{String})::String
     packed_command = "*$(length(command))\r\n"
     for token in command
         packed_command = string(packed_command, "\$$(length(token))\r\n", token, "\r\n")
@@ -93,7 +93,7 @@ Merge_parameters(command...) = vcat(map(Merge_parameter, command)...)::Vector{St
 
 Merge_parameter(token::Symbol) = string(token)
 Merge_parameter(token::Number) = string(token)
-Merge_parameter(token::AbstractString) = token
+Merge_parameter(token::AbstractString) = string(token)
 Merge_parameter(token::Vector)  = map(Merge_parameter, token)::Vector{String}
 Merge_parameter(token::Set) = json(token)
 Merge_parameter(token::Dict) = json(token)
@@ -101,53 +101,51 @@ Merge_parameter(token::Tuple)  = json(token)
 
 # 生成函数 宏
 
-extra(d::Expr) = d.head == :(::) ? d.args[1] : d 
+extra(d::Expr) = d.head == :(::) ? d.args[1] : d
 extra(d::Symbol) = d
-extra(d::AbstractString) = d 
+extra(d::AbstractString) = d
 
-function genfunction(  kw::Vector ) 
+function genfunction(  kw::Vector )
 
     func = Expr(:call , Symbol(kw[1]) ,Expr(:(::) , :conn , :RedisConnection))
     func1 = Expr(:call , Symbol(kw[1]))
 
-    length(kw) > 1 && begin 
+    length(kw) > 1 && begin
                         append!(func.args, kw[2:end] )
                         append!(func1.args, kw[2:end] )
-                        end 
-    tmp = [ extra(i) for i in kw ]  
+                        end
+    tmp = [ extra(i) for i in kw ]
 
     block = Expr(:block , Expr(:call, :execute_reply, :conn, Expr(:call, :Merge_parameters ,tmp... )) )
     block1 = Expr(:block ,  Expr(:call, :pack_command , Expr(:call, :Merge_parameters ,tmp... ) ))
 
    esc(Expr(:block , Expr(:function , func, block), Expr(:function , func1, block1)))
 
-end 
+end
 
 macro genfunction( kw... )
-     genfunction( collect(kw) ) 
-end 
+     genfunction( collect(kw) )
+end
 
 function pipe_trans(conn::RedisConnectionBase, comms::Vector{ <: AbstractString}, num::Int)
-     execute_send(conn, join(comms) )  
+     execute_send(conn, join(comms) )
      reply(conn.socket, num )
-end 
+end
 
 function pipe_trans(conn::RedisConnectionBase, comms::AbstractString, num::Int)
-     execute_send(conn, comms  )  
+     execute_send(conn, comms  )
      reply(conn.socket, num )
-end 
+end
 
 pipelines(conn::RedisConnectionBase, fun... ) = pipe_trans(conn, collect(fun), length(collect(fun)))
 pipelines(conn::RedisConnectionBase, fun::AbstractString, num::Int ) = pipe_trans(conn, fun,  num )
 
-function transactions(conn::RedisConnectionBase, fun... ) 
+function transactions(conn::RedisConnectionBase, fun... )
      comms = [multi(), collect(fun)..., exec()]
      pipe_trans(conn, comms, length(comms))
-end 
+end
 
-function transactions(conn::RedisConnectionBase, fun::AbstractString, num::Int ) 
+function transactions(conn::RedisConnectionBase, fun::AbstractString, num::Int )
      comms = join[multi(), fun , exec()]
      pipe_trans(conn, comms, num )
-end 
-
-
+end
