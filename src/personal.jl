@@ -18,14 +18,14 @@ ftime() = Ftime(TIMES, TNUM)
 
 @inline redis_test(conn::RedisConnection,test::AbstractString) = send_command(conn, echo(test) )
 
-function redis_collect(conn::RedisConnection , data::Vector{String} = [], test::AbstractString="test")
+function redis_collect(conn::RedisConnection  test::AbstractString="test")
 
 	res = redis_test(conn, test)
-	collects(conn,test , data)
+	collects(conn,test , String[])
 
 end
 
-function collects(conn::RedisConnection , test::AbstractString, data::Vector{String} = [])
+function collects(conn::RedisConnection , test::AbstractString, data::Vector{String})
 	tmp = readline(conn.socket)
 	syms, value = tmp[1] , tmp[2:end]
 	if (syms in sym)
