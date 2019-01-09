@@ -56,8 +56,8 @@ function reply(::Type{redisreply{:*}}, value::AbstractString, conn::TCPSocket)
     num == -1 && return nothing
     num == 0 && return nothing
     res = Vector{Union{Int, String, Nothing}}(undef, num)
-    @inbounds for i in 1:num
-        res[i] = reply(conn)
+    for i in 1:num
+        @inbounds res[i] = reply(conn)
     end
     return res
 end
