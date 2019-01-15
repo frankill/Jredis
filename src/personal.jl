@@ -42,7 +42,7 @@ function collects(conn::RedisConnection , test::AbstractString, data::Vector)
 end
 
 function reline(conn::RedisConnectionBase, times::Ftime, fun::Function)
-    println("Failed to connect to Redis server ,Reconnect after $(fun(times)) seconds .")
+    println("Failed to connect to Redis server ,Reconnect after $(times.t) seconds .")
     sleep(times.t)
     try
         reconnect(conn)
