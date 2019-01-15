@@ -89,7 +89,8 @@ macro genmacro(funname, lenfun, popfun)
                                                                         Expr(:call, Expr(:$, :fun), :data) ),
 								Expr(:(=) , :tmp , Expr(:call, :redis_collect , Expr(:$, :redis))),
 								Expr(:(&&), Expr(:call , :(>=) , Expr(:call, :length, :tmp) , 1),
-                                                                        Expr(:call, Expr(:$, :fun), :tmp) ))),
+                                                                        Expr(:call, Expr(:$, :fun), :tmp) ),
+								Expr(:call, :disconnect, Expr(:$, :redis)))),
                 Expr(:call, :atexit , :f) ,
                 Expr(:(=), :freq, Expr(:call, :ftime)),
                 Expr(:while , true,
@@ -101,10 +102,7 @@ macro genmacro(funname, lenfun, popfun)
                                                     Expr(:call, Expr(:$, :fun), :data),
                                                     Expr(:(=), :data, Expr(:call, :Vector, :undef, 0)),
                                                     Expr(:call, :finit, :freq )),
-                                        Expr(:block, Expr(:if , Expr(:call, :(>=), Expr(:(.) , :freq, :(:t)), 600),
-                                                                    Expr(:call, :sleep, 600),
-                                                                    Expr(:call, :sleep, Expr(:call, :fadd, :freq))
-                                                                     ))))))
+                                        Expr(:block, Expr(:call, :sleep, Expr(:call, :fadd, :freq)))))))
 
              esc( Expr( :macro , func,   Expr(:block, Expr(:call, :esc,Expr(:quote, body)))))
 
