@@ -42,13 +42,13 @@ function collects(conn::RedisConnection , test::AbstractString, data::Vector)
 end
 
 function reline(conn::RedisConnectionBase, times::Ftime, fun::Function)
-    println("Failed to connect to Redis server ,Reconnect after $(times.t) seconds .")
+    println("Failed to connect to Redis server ,Reconnect after $(fun(times)) seconds .")
     sleep(times.t)
     try
         reconnect(conn)
         println("""
 			Success to connect to Redis server ,
-			Time consuming greater than or equal to $(fun(times.t) + times.num*600 ) seconds .
+			Time consuming greater than or equal to $(fun(times)) seconds .
 			""")
     catch
         fadd(times)
@@ -58,7 +58,15 @@ function reline(conn::RedisConnectionBase, times::Ftime, fun::Function)
 end
 
 macro cheak_reline(conn )
-	f(x::Int)::Int = (x/4)*x + (x/2 )
+
+	function f(x::Ftime)::Int
+		if x.num >0
+			x.num * 600
+		else
+			(x.t/4)*x.t + (x.t/2 )
+		end
+	end
+
     con = esc(conn)
     quote
         try
@@ -67,6 +75,7 @@ macro cheak_reline(conn )
             reline( $con , ftime(), $f)
         end
      end
+
 end
 
 macro genmacro(funname, lenfun, popfun)
