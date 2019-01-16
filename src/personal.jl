@@ -3,7 +3,7 @@ const TNUM = 0
 const sym = ['\$', '+', '-', ':' , '*']
 mutable struct Ftime
     t::Int
-	num::Int
+    num::Int
 end
 
 ftime() = Ftime(TIMES, TNUM)
@@ -14,7 +14,7 @@ ftime() = Ftime(TIMES, TNUM)
 				t.t += TIMES
 			end
 		end
-@inline finit(t::Ftime) =  t.t, t.num = TIMES, TNUM
+@inline finit(t::Ftime) = t.t > 2 && ( t.t, t.num = TIMES, TNUM )
 
 @inline redis_test(conn::RedisConnection,test::AbstractString) = send_command(conn, echo(test) )
 
