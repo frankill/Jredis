@@ -80,40 +80,39 @@ end
 
 macro genmacro(funname, lenfun, popfun)
 
-    func = Expr(:call , funname, :redis,  :key ,:fun, :batch )
+	func = Expr(:call , funname, :redis,  :key ,:fun, :batch )
 
-    nums = Expr(:(=), :num , Expr(:call, :(|>),
-                Expr(:call, lenfun, Expr(:$, :redis), Expr(:$, :key)) ,
-                Expr(:(->), :q, Expr(:block,
-                    Expr(:if , Expr(:call, :(>=), :q, Expr(:$, :batch)) ,
-                        Expr(:$, :batch) , :q)))))
+	nums = Expr(:(=), :num , Expr(:call, :(|>),
+		    Expr(:call, lenfun, Expr(:$, :redis), Expr(:$, :key)) ,
+		    Expr(:(->), :q, Expr(:block,
+			Expr(:if , Expr(:call, :(>=), :q, Expr(:$, :batch)) ,
+			    Expr(:$, :batch) , :q)))))
 
-    expr = Expr(:call, :pipelines, Expr(:$, :redis),
-                Expr(:call, :repeat , Expr(:call, popfun , Expr(:$, :key)) ,:num), :num)
+	expr = Expr(:call, :pipelines, Expr(:$, :redis),
+		    Expr(:call, :repeat , Expr(:call, popfun , Expr(:$, :key)) ,:num), :num)
 
-    body =  Expr(:block,
-                Expr(:(=), :data, Expr(:call, :Vector, :undef, 0)) ,
-                Expr(:function, Expr(:call, :f), Expr(:block,
-                                Expr(:(&&), Expr(:call , :(>=) , Expr(:call, :length, :data) , 1),
-                                                                        Expr(:call, Expr(:$, :fun), :data) ),
-								Expr(:(=) , :tmp , Expr(:call, :redis_collect , Expr(:$, :redis))),
-								Expr(:(&&), Expr(:call , :(>=) , Expr(:call, :length, :tmp) , 1),
-                                                                        Expr(:call, Expr(:$, :fun), :tmp) ),
-								Expr(:call, :disconnect, Expr(:$, :redis)))),
-                Expr(:call, :atexit , :f) ,
-                Expr(:(=), :freq, Expr(:call, :ftime)),
-                Expr(:while , true,
-                    Expr(:block, Expr(:macrocall, Symbol("@cheak_reline"), "", Expr(:$, :redis)) ,
-                    nums ,
-                    Expr(:if , Expr(:call, :(>=), :num ,1),
-                                        Expr(:block,
-                                                    Expr(:(=), :data , expr ),
-                                                    Expr(:call, Expr(:$, :fun), :data),
-                                                    Expr(:(=), :data, Expr(:call, :Vector, :undef, 0)),
-                                                    Expr(:call, :finit, :freq )),
-                                        Expr(:block, Expr(:call, :sleep, Expr(:call, :fadd, :freq)))))))
+	body =  Expr(:block,
+		    Expr(:(=), :freq, Expr(:call, :ftime)),
+		    Expr(:while , true,
+			Expr(:block, Expr(:macrocall, Symbol("@cheak_reline"), "", Expr(:$, :redis)) ,
+			nums ,
+			Expr(:if , Expr(:call, :(>=), :num ,1),
+					    Expr(:try, Expr(:block,
+						    Expr(:global, Expr(:(=), :data , expr )),
+						    Expr(:call, Expr(:$, :fun), :data),
+						    Expr(:(=), :data, 0 ),
+						    Expr(:call, :finit, :freq )),
+						   false ,
+						Expr(:block,
+						    Expr(:(&&), Expr( :call, :!, Expr(:call , :(isa) , :data , :Int)), 
+						    Expr(:call, Expr(:$, :fun), :data) ),
+							Expr(:(=) , :tmp , Expr(:call, :redis_collect , Expr(:$, :redis))),
+							Expr(:(&&), Expr(:call , :(>=) , Expr(:call, :length, :tmp) , 1),
+							Expr(:call, Expr(:$, :fun), :tmp) ),
+							Expr(:call, :disconnect, Expr(:$, :redis)))),
+					    Expr(:block, Expr(:call, :sleep, Expr(:call, :fadd, :freq)))))))
 
-             esc( Expr( :macro , func,   Expr(:block, Expr(:call, :esc,Expr(:quote, body)))))
+		 esc( Expr( :macro , func,   Expr(:block, Expr(:call, :esc,Expr(:quote, body)))))
 
 end
 
