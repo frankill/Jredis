@@ -30,7 +30,10 @@ function RedisConnection(conn::RedisConnection)
     end
 end
 
-@inline reconnect(conn::RedisConnectionBase) = (conn.socket = connect(conn.host, conn.port))
+@inline function reconnect(conn::RedisConnectionBase) 
+      conn.socket = connect(conn.host, conn.port)
+      on_connect(conn)
+end 
 
 @inline function on_connect(conn::RedisConnectionBase)
     conn.password != "" && auth(conn, conn.password)
